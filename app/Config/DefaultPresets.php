@@ -4,6 +4,7 @@ namespace TechBit\Snow\Config;
 
 use TechBit\Snow\Config\Preset\CalmPreset;
 use TechBit\Snow\Config\Preset\ClassicalPreset;
+use TechBit\Snow\Config\Preset\MassiveSnowPreset;
 use TechBit\Snow\Config\Preset\SnowyPreset;
 use TechBit\Snow\Config\Preset\WindyPreset;
 
@@ -17,7 +18,7 @@ class DefaultPresets
             ClassicalPreset::class => 90,
             WindyPreset::class => 20,
             SnowyPreset::class => 20,
-            CalmPreset::class => 10,
+            MassiveSnowPreset::class => 10,
         ];
     }
 
