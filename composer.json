@@ -1,0 +1,17 @@
+{
+    "name": "techbit/snow",
+    "authors": [
+        {
+            "name": "Maciej Ostrowski",
+            "email": "mmm.ostrowski@gmail.com"
+        }
+    ],
+    "require": {
+        "php-di/php-di": "^6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TechBit\\Snow\\": "app/"
+        }
+    }
+}
