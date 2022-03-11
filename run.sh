@@ -9,7 +9,13 @@ function main() {
         return 1
     fi
 
-    dockerRun "${@}"
+    if [[ -s "${1:-}" ]]; then
+        local customSceneFile="${1}"
+        shift 1
+        dockerRun "--volume=${customSceneFile}:/app/scene.txt" php-snow "${@}"
+    else
+        dockerRun php-snow "${@}"
+    fi
 }
 
 function dockerBuild() {
@@ -23,7 +29,7 @@ function dockerBuild() {
 function dockerRun() {
     (
         cd "${SCRIPT_DIR}"
-        docker run "$(dockerTTI)" --rm --name php-snow --env PHP_SNOW_APP_MODE php-snow "${@}"
+        docker run "$(dockerTTI)" --rm --name php-snow --env PHP_SNOW_APP_MODE "${@}"
     )
 }
 

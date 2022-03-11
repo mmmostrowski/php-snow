@@ -4,7 +4,9 @@ set -eu
 function main() {
     waitUntilTerminalSizeIsAvailable
 
-    terminalCleanupOnExit true
+    if [[ "${PHP_SNOW_APP_MODE:-}" != "develop" ]]; then
+        terminalCleanupOnExit true
+    fi
 
     if ! "${@}"; then
         terminalCleanupOnExit false
