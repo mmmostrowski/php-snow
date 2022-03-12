@@ -94,7 +94,7 @@ EOL;
 
     protected function drawCredentials()
     {
-        $text = "( 2022 (C) Maciej Ostrowski )";
+        $text = "[ 2022 (C) Maciej Ostrowski | https://github.com/mmmostrowski ]";
 
         $this->basis->drawChars($text,
             $this->console->maxX() - strlen($text) / 2,

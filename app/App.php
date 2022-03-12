@@ -140,16 +140,21 @@ class App
         }
     }
 
+    /**
+     * @return string
+     */
     protected function determineCustomSceneContent($arg)
     {
-        if (empty($arg) ) {
-            return false;
+        if (empty($arg)) {
+            return '';
         }
 
-        $customSceneContent = @file_get_contents($arg);
-        if (!$customSceneContent) {
-            $customSceneContent = @base64_decode($arg);
+        if (str_starts_with($arg, 'base64:')) {
+            $customSceneContent = @base64_decode(preg_replace('/^base64:/', '', $arg));
+        } else {
+            $customSceneContent = @file_get_contents($arg);
         }
-        return $customSceneContent;
+        return (string)$customSceneContent;
     }
+
 }
