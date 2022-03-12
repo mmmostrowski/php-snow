@@ -8,6 +8,10 @@ This simple PHP app generates snow in a terminal.
 docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow
 ```
 
+<p align="center">
+  <img src="screenshot.png" alt="PHP Snow Screenshot"/>
+</p>
+
 #### Run custom scene
 ```shell
 docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow https://raw.githubusercontent.com/mmmostrowski/php-snow/main/scene-example.txt massiveSnow
@@ -59,14 +63,11 @@ docker run -it --rm --volume /path/to/your/scene.txt:/app/scene.txt mmmostrowski
 ```
 
 
-### Send Postcard to your friend!
+### Send a Postcard to your friend!
 
-If your friend has a Docker installed you may want to send a postcard.
-Simple make your scene available publicly and send a docker command to your friend:
+You can make your scene text file available publicly and send a Docker command to your friend:
 ```shell
 docker run -it --rm mmmostrowski/php-snow https://domain.com/url/to/scene.txt [preset]
 ```
-
-
 
 
