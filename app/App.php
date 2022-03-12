@@ -142,9 +142,13 @@ class App
 
     protected function determineCustomSceneContent($arg)
     {
-        $customSceneContent = false;
-        if (!empty($arg) ) {
-            $customSceneContent = @file_get_contents($arg);
+        if (empty($arg) ) {
+            return false;
+        }
+
+        $customSceneContent = @file_get_contents($arg);
+        if (!$customSceneContent) {
+            $customSceneContent = @base64_decode($arg);
         }
         return $customSceneContent;
     }
