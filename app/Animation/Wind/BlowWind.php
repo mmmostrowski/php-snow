@@ -164,9 +164,9 @@ class BlowWind implements IAnimationAliveObject, IWind
     {
         $minAfterEdge = 2;
         $maxAfterEdge = 10;
-        $strength = rand($this->minStrength, $this->maxStrength);
+        $strength = rand((int)($this->minStrength * 10000), (int)($this->maxStrength * 10000)) / 10000;
         $coreRadiusRatio = (float)(rand(70, 100) / 100);
-        $animationLength = rand($this->minAnimationLength, $this->maxAnimationLength);
+        $animationLength = rand((int)($this->minAnimationLength * 10000), (int)($this->maxAnimationLength * 10000)) / 10000;
 
         $left = rand(1, 2) == 1;
         $y = rand($this->console->minY(), $this->console->maxY());
