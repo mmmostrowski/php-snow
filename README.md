@@ -1,16 +1,16 @@
 # PHP Terminal Snow Toy
 
-This simple PHP app generates snow in a terminal.
+Simple PHP app generating a snow in the terminal.
+
+<p align="center">
+  <img src="screenshot.png" alt="PHP Snow Screenshot"/>
+</p>
 
 ### Quick run
 
 ```shell
 docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow
 ```
-
-<p align="center">
-  <img src="screenshot.png" alt="PHP Snow Screenshot"/>
-</p>
 
 #### Run custom scene
 ```shell
@@ -52,7 +52,7 @@ docker run -it --rm mmmostrowski/php-snow snowy
 
 ### Custom scene 
 
-You can provide custom scenes in plain text format:
+You can provide custom scenes in a plain text format:
 
 * Generate your custom text file
   * You might [want to use](https://google.gprivate.com/search.php?search?q=ASCII+text+Generator+site) some ASCII Text Generator site for that purpose
