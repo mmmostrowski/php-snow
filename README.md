@@ -14,7 +14,10 @@ docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow
 
 #### Run custom scene
 ```shell
-docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow https://raw.githubusercontent.com/mmmostrowski/php-snow/main/scene-example.txt massiveSnow
+docker pull mmmostrowski/php-snow \
+    && docker run -it --rm mmmostrowski/php-snow \
+         https://raw.githubusercontent.com/mmmostrowski/php-snow/main/scene-example.txt \
+         massiveSnow
 ```
 
 
