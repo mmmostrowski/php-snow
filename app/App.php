@@ -1,6 +1,7 @@
 <?php namespace TechBit\Snow;
 
 use TechBit\Snow\Animation\Animation;
+use TechBit\Snow\Animation\Scene\UserSceneProvider;
 use TechBit\Snow\Animation\Wind\BlowWind;
 use TechBit\Snow\Animation\Wind\FieldWind;
 use TechBit\Snow\Animation\Wind\IWind;
@@ -31,6 +32,11 @@ class App
      */
     protected $animation;
 
+    /**
+     * @var UserSceneProvider
+     */
+    protected $customScene;
+
     public static function run(array $argv)
     {
         try {
@@ -58,6 +64,11 @@ class App
     {
         srand(time());
 
+        $customSceneContent = $this->determineCustomSceneContent($argv[1]);
+        if ($customSceneContent) {
+            array_shift($argv);
+        }
+
         if (isset($argv[1]) && $argv[1] != 'random') {
             $config = $this->presetFactory()->provide($argv[1]);
         } else {
@@ -78,8 +89,18 @@ class App
         $this->container->set(Config::class, $config);
         $this->container->set(IWind::class, $this->container->get(WindComposition::class));
 
+        $this->setupCustomScene($this->container->get(UserSceneProvider::class), $customSceneContent);
+
         $this->animation = $this->container->get(Animation::class);
         $this->animation->initialize();
+    }
+
+    protected function setupCustomScene(UserSceneProvider $sceneProvider, $customSceneContent)
+    {
+        if (!$customSceneContent) {
+            return;
+        }
+        $sceneProvider->makeCustomScene($customSceneContent);
     }
 
     protected function execute()
@@ -117,5 +138,14 @@ class App
         if ($width < $minWidth || $height < $minHeight) {
             throw new InvalidConsoleSizeException("Console size must be at least ${minWidth}x${minHeight}!\nCurrent console size is {$width}x{$height}.\nPlease make your terminal window larger!");
         }
+    }
+
+    protected function determineCustomSceneContent($arg)
+    {
+        $customSceneContent = false;
+        if (!empty($arg) ) {
+            $customSceneContent = @file_get_contents($arg);
+        }
+        return $customSceneContent;
     }
 }

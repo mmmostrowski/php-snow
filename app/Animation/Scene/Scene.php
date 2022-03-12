@@ -40,6 +40,7 @@ class Scene implements IAnimationVisibleObject
         if ($this->config->showScene()) {
             $this->drawPHP();
             $this->drawIsAwesome();
+            $this->drawCredentials();
         }
     }
 
@@ -69,16 +70,9 @@ PPPPPPPPPP               HHHHHHHHH     HHHHHHHHH     PPPPPPPPPP
 EOL;
 
 
-        $this->basis->drawChars($chars,
-            $this->console->centerX(),
-            $this->console->centerY() - 7,
-            "light_blue"
-        );
+        $this->basis->drawCharsInCenter($chars, 0, -7, "light_blue");
     }
 
-    /**
-     * @return string
-     */
     protected function drawIsAwesome()
     {
         $chars = <<<EOL
@@ -95,12 +89,18 @@ ___   ____              d'YM.    ____    _    ___   ____     ____     _____   __
 _MM_MYMMMM9        _dM_     _dMM_    YP    YP      YMMMM9  MYMMMM9   YMMMMM9  _MM_  _MM_  _MM_ YMMMM9                                                                                                                                                                                                               
 EOL;
 
-        $this->basis->drawChars($chars,
-            $this->console->centerX(),
-            $this->console->centerY() + 10,
+        $this->basis->drawCharsInCenter($chars, 0, 10, "blue");
+    }
+
+    protected function drawCredentials()
+    {
+        $text = "( 2022 (C) Maciej Ostrowski )";
+
+        $this->basis->drawChars($text,
+            $this->console->maxX() - strlen($text) / 2,
+            $this->console->maxY(),
             "blue"
         );
-        return $chars;
     }
 
 }

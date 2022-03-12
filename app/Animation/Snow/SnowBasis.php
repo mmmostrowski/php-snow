@@ -201,13 +201,7 @@ class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
 
     public function drawChars($chars, $posX, $posY, $color)
     {
-        $lines = [];
-        foreach (explode(PHP_EOL, $chars) as $line) {
-            if (!trim($line)) {
-                continue;
-            }
-            $lines[] = $line;
-        }
+        $lines = explode(PHP_EOL, $chars);
 
         $height = count($lines);
         $width = 0;

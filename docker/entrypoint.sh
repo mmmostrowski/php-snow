@@ -14,7 +14,7 @@ function main() {
 }
 
 function waitUntilTerminalSizeIsAvailable() {
-    local iterations=10
+    local iterations=6
 
     while (( --iterations >= 0 )); do
         local cols

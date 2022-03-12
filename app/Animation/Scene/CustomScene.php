@@ -44,14 +44,11 @@ class CustomScene implements IAnimationVisibleObject
             return;
         }
 
+        $this->basis->drawGround();
+
         $chars = $this->userCustomScene->contentText();
 
-        $this->basis->drawChars($chars,
-            $this->console->centerX(),
-            $this->console->centerY() - 7,
-            "light_blue"
-        );
-
+        $this->basis->drawCharsInCenter($chars, 0, 0, "light_blue");
     }
 
     public function renderLoopFrame()
