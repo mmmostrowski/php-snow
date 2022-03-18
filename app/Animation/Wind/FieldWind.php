@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Wind;
 
@@ -6,99 +6,43 @@ use TechBit\Snow\Animation\Object\IAnimationAliveObject;
 use TechBit\Snow\Animation\Snow\ParticlesSet;
 use TechBit\Snow\Config\Config;
 use TechBit\Snow\Console\Console;
-use TechBit\Snow\Math\Interpolation;
 use TechBit\Snow\Math\PerlinNoise3D;
+
 
 class FieldWind implements IAnimationAliveObject, IWind
 {
 
-    /**
-     * @var ParticlesSet
-     */
-    protected $particles;
+    protected int $gridSize = 0;
 
-    /**
-     * @var int
-     */
-    protected $gridSize = 0;
+    protected float $time = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $time = 0.0;
+    protected array $grid = [];
 
-    /**
-     * @var PerlinNoise3D
-     */
-    protected $vectorDirectionNoise;
+    protected float $strengthMin = 0.0;
 
-    /**
-     * @var PerlinNoise3D
-     */
-    protected $vectorPowerNoise;
+    protected float $strengthMax = 0.0;
 
-    /**
-     * @var array[]
-     */
-    protected $grid = [];
-    /**
-     * @var Config
-     */
-    protected $config;
-    /**
-     * @var Console
-     */
-    protected $console;
+    protected int $updateGridFrameCounter = 0;
 
-    /**
-     * @var float
-     */
-    protected $strengthMin = 0.0;
+    protected int $updateGridEveryNthFrame = 0;
 
-    /**
-     * @var float
-     */
-    protected $strengthMax = 0.0;
-
-    /**
-     * @var int
-     */
-    protected $updateGridFrameCounter = 0;
-
-    /**
-     * @var int
-     */
-    protected $updateGridEveryNthFrame = 0;
-
-    /**
-     * @var float
-     */
-    protected $fieldWindVariation = 0.0;
-    /**
-     * @var Interpolation
-     */
-    protected $interpolation;
+    protected float $fieldWindVariation = 0.0;
 
 
     public function __construct(
-        ParticlesSet  $particles, PerlinNoise3D $vectorDirectionNoise,
-        PerlinNoise3D $vectorPowerNoise, Config $config, Console $console,
-        Interpolation $interpolation
-    )
+        protected readonly ParticlesSet  $particles,
+        protected readonly PerlinNoise3D $vectorDirectionNoise,
+        protected readonly PerlinNoise3D $vectorPowerNoise,
+        protected readonly Config $config,
+        protected readonly Console $console )
     {
-        $this->particles = $particles;
-        $this->vectorDirectionNoise = $vectorDirectionNoise;
-        $this->vectorPowerNoise = $vectorPowerNoise;
-        $this->config = $config;
-        $this->console = $console;
-        $this->interpolation = $interpolation;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->time = (float)time();
 
-        $this->gridSize = (int)$this->config->windFieldGridSize();
+        $this->gridSize = $this->config->windFieldGridSize();
         $this->vectorPowerNoise->initialize(3);
         $this->vectorDirectionNoise->initialize(20);
 
@@ -111,7 +55,7 @@ class FieldWind implements IAnimationAliveObject, IWind
         $this->updateGrid();
     }
 
-    public function update()
+    public function update(): void
     {
         $this->time += 0.01 * $this->fieldWindVariation;
         if (!--$this->updateGridFrameCounter) {
@@ -121,7 +65,7 @@ class FieldWind implements IAnimationAliveObject, IWind
     }
 
 
-    public function moveParticle($idx)
+    public function moveParticle(int $idx): void
     {
         $particleX = (int)(($this->gridSize) * ($this->particles->x($idx) - $this->console->minX()) / $this->console->width());
         if ($particleX >= $this->gridSize || $particleX < 0) {
@@ -136,7 +80,7 @@ class FieldWind implements IAnimationAliveObject, IWind
         $this->particles->updateMomentumArr($idx, $this->grid[$particleX][$particleY]);
     }
 
-    protected function updateGrid()
+    protected function updateGrid(): void
     {
         $squeezeFactor = 0.3;
         $howMuchUpRad = M_PI * 0.7;

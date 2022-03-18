@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Wind;
 
@@ -19,67 +19,31 @@ class BlowWind implements IAnimationAliveObject, IWind
     const CORE_RADIUS = 6;
     const STRENGTH = 7;
 
-    /**
-     * @var float
-     */
-    protected $time = 0.0;
+    protected float $time = 0.0;
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected array $blowSources = [];
 
-    /**
-     * @var ParticlesSet
-     */
-    protected $particles;
+    protected int $maxNumOfWindBlows = 0;
 
-    /**
-     * @var Console
-     */
-    protected $console;
+    protected int $frequencyOfWindBlows = 0;
 
-    /**
-     * @var array[]
-     */
-    protected $blowSources = [];
+    protected float $minStrength = 0.0;
 
-    /**
-     * @var int
-     */
-    protected $maxNumOfWindBlows = 0;
-    /**
-     * @var int
-     */
-    protected $frequencyOfWindBlows = 0;
-    /**
-     * @var float
-     */
-    protected $minStrength = 0.0;
+    protected float $maxStrength = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $maxStrength = 0.0;
+    protected int $minAnimationLength = 0;
 
-    /**
-     * @var int
-     */
-    protected $minAnimationLength = 0;
-    /**
-     * @var int
-     */
-    protected $maxAnimationLength = 0;
+    protected int $maxAnimationLength = 0;
 
 
-    public function __construct(Config $config, ParticlesSet $particles, Console $console)
+    public function __construct(
+        protected readonly Config $config,
+        protected readonly ParticlesSet $particles,
+        protected readonly Console $console)
     {
-        $this->config = $config;
-        $this->particles = $particles;
-        $this->console = $console;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->time = 0.0;
         $this->frequencyOfWindBlows = $this->config->windBlowsFrequency();
@@ -90,7 +54,7 @@ class BlowWind implements IAnimationAliveObject, IWind
         $this->maxAnimationLength = $this->config->windBlowsMaxAnimationLength();
     }
 
-    public function update()
+    public function update(): void
     {
         $this->time += 1.0;
 
@@ -103,7 +67,7 @@ class BlowWind implements IAnimationAliveObject, IWind
         }
     }
 
-    public function moveParticle($idx)
+    public function moveParticle(int $idx): void
     {
         $x = $this->particles->x($idx);
         $y = $this->particles->y($idx);
@@ -113,7 +77,7 @@ class BlowWind implements IAnimationAliveObject, IWind
         }
     }
 
-    protected function blowFromSource($blowId, $particleIdx, $x, $y, $blowSource)
+    protected function blowFromSource(int $blowId, int $particleIdx, float $x, float $y, array $blowSource): void
     {
         $vx = (float)($x - $blowSource[self::X]);
         $vy = (float)($y - $blowSource[self::Y]);
@@ -146,41 +110,41 @@ class BlowWind implements IAnimationAliveObject, IWind
         );
     }
 
-    protected function addBlowSource($x, $y, $strength, $radius, $coreRadius, $animationLength)
-    {
-        $this->blowSources[] = [
-            self::X => (float)$x,
-            self::Y => (float)$y,
-            self::STRENGTH => (float)$strength,
-            self::RADIUS => (float)$radius,
-            self::RADIUS_SQUARE => (float)$radius * $radius,
-            self::CORE_RADIUS => (float)$coreRadius,
-            self::ANIMATION_LENGTH => (int)$animationLength,
-            self::TIME => (float)$this->time,
-        ];
-    }
-
-    protected function generateNewWindBlow()
+    protected function generateNewWindBlow(): void
     {
         $minAfterEdge = 2;
         $maxAfterEdge = 10;
         $strength = rand((int)($this->minStrength * 10000), (int)($this->maxStrength * 10000)) / 10000;
         $coreRadiusRatio = (float)(rand(70, 100) / 100);
-        $animationLength = rand((int)($this->minAnimationLength * 10000), (int)($this->maxAnimationLength * 10000)) / 10000;
+        $animationLength = (int)(rand((int)($this->minAnimationLength * 10000), (int)($this->maxAnimationLength * 10000)) / 10000);
 
         $left = rand(1, 2) == 1;
-        $y = rand($this->console->minY(), $this->console->maxY());
+        $y = rand((int)$this->console->minY(), (int)$this->console->maxY());
         if ($left) {
-            $x = rand($this->console->minX() - $minAfterEdge, $this->console->minX() - $maxAfterEdge);
+            $x = rand((int)$this->console->minX() - $minAfterEdge, (int)$this->console->minX() - $maxAfterEdge);
         } else {
-            $x = rand($this->console->maxX() + $minAfterEdge, $this->console->maxX() + $maxAfterEdge);
+            $x = rand((int)$this->console->maxX() + $minAfterEdge, (int)$this->console->maxX() + $maxAfterEdge);
         }
 
-        $radius = $this->console->width() + $maxAfterEdge * 2 + 10;
+        $radius = $this->console->width() + $maxAfterEdge * 2.0 + 10.0;
         $this->addBlowSource($x, $y, $strength, $radius, $radius * $coreRadiusRatio, $animationLength);
     }
 
-    protected function removeSource($blowId)
+    protected function addBlowSource(float $x, float $y, float $strength, float $radius, float $coreRadius, int $animationLength): void
+    {
+        $this->blowSources[] = [
+            self::X => $x,
+            self::Y => $y,
+            self::STRENGTH => $strength,
+            self::RADIUS => $radius,
+            self::RADIUS_SQUARE => $radius * $radius,
+            self::CORE_RADIUS => $coreRadius,
+            self::ANIMATION_LENGTH => $animationLength,
+            self::TIME => $this->time,
+        ];
+    }
+
+    protected function removeSource(int $blowId): void
     {
         unset($this->blowSources[$blowId]);
     }

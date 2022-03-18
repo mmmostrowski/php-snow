@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation;
 
@@ -20,17 +20,12 @@ use TechBit\Snow\Animation\Wind\WindComposition;
 class AnimationObjectsList
 {
 
-    /**
-     * @var UserSceneProvider
-     */
-    protected $userCustomScene;
-
-    public function __construct(UserSceneProvider $userCustomScene)
+    public function __construct(
+        protected readonly UserSceneProvider $userCustomScene)
     {
-        $this->userCustomScene = $userCustomScene;
     }
 
-    public function allElements()
+    public function allElements(): array
     {
         return [
             FrameStabilizer::class,

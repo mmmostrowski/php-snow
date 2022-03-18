@@ -1,32 +1,16 @@
-<?php namespace TechBit\Snow\Console;
+<?php declare(strict_types=1);
+
+namespace TechBit\Snow\Console;
 
 
 class Console
 {
+    protected float $cols = 0.0;
 
-    /**
-     * @var string[]
-     */
-    protected $colors = [
-        'blue' => "\e[34m",
-        'light_blue' => "\e[94m",
-        'green' => "\e[32m",
-    ];
+    protected float $rows = 0.0;
 
-    /**
-     * @var int
-     */
-    protected $cols = 0;
+    protected int $refreshingCounter = 0;
 
-    /**
-     * @var int
-     */
-    protected $rows = 0;
-
-    /**
-     * @var int
-     */
-    protected $refreshingCounter = 0;
 
     public function __construct()
     {
@@ -36,111 +20,102 @@ class Console
         });
     }
 
-    public function minX()
+    public function minX(): float
     {
-        return (int)0;
+        return 0;
     }
 
-    public function maxX()
+    public function maxX(): float
     {
-        return (int)$this->cols;
+        return $this->cols;
     }
 
-    public function minY()
+    public function minY(): float
     {
-        return (int)0;
+        return 0;
     }
 
-    public function maxY()
+    public function maxY(): float
     {
-        return (int)$this->rows;
+        return $this->rows;
     }
 
-    public function printAt($x, $y, $txt)
+    public function printAt(float $x, float $y, string $txt): void
     {
         $this->refreshConsoleSize();
 
-        $x = (int)$x;
-        $y = (int)$y;
-
-        if ($x < $this->minX() || $x > $this->maxX()) {
+        if ($x < $this->minX() || $x > $this->maxX()
+            || $y < $this->minY() || $y > $this->maxY()) {
             return;
         }
 
-        if ($y < $this->minY() || $y > $this->maxY()) {
-            return;
-        }
+        $x=(int)$x;
+        $y=(int)$y;
 
+        # move cursor
         echo "\033[?25l";
         echo "\033[{$y};{$x}H";
 
+        # print
         echo $txt;
     }
 
-    public function enableColor($color)
+    public function switchToColor(ConsoleColor $color): void
     {
-        if ($color === null) {
-            return;
-        }
-
-        if (!isset($this->colors[$color])) {
-            throw new \Exception("Invalid color: $color");
-        }
-
-        echo $this->colors[$color];
+        echo $color->terminalCode();
     }
 
-    public function clearFormatting()
+    public function resetColor(): void
     {
-        echo "\e[0m";
+        echo ConsoleColor::DEFAULT->terminalCode();
     }
 
-    public function width()
+    public function width(): float
     {
         return $this->maxX() - $this->minX();
     }
 
-    public function height()
+    public function height(): float
     {
         return $this->maxY() - $this->minY();
     }
 
-    public function isIn($x, $y)
+    public function isIn(float $x, float $y): bool
     {
         return $x >= $this->minX() && $x <= $this->maxX()
             && $y >= $this->minY() && $y <= $this->maxY();
     }
 
-    public function notIn($x, $y)
+    public function notIn(float $x, float $y): bool
     {
         return $x < $this->minX() || $x > $this->maxX()
             || $y < $this->minY() || $y > $this->maxY();
     }
 
-    public function centerX()
+    public function centerX(): float
     {
         return ($this->maxX() - $this->minX()) / 2;
     }
 
-    public function centerY()
+    public function centerY(): float
     {
         return ($this->maxY() - $this->minY()) / 2;
     }
 
-    protected function refreshConsoleSize()
-    {
-        if (0 == $this->refreshingCounter++ % 500) {
-            $this->cols = exec('tput cols');
-            $this->rows = exec('tput lines');
-        }
-    }
-
-    public function clear()
+    public function clear(): void
     {
         for ($y = $this->minY(); $y <= $this->maxY(); ++$y) {
             for ($x = $this->minX(); $x <= $this->maxX(); ++$x) {
                 $this->printAt($x, $y, ' ');
             }
+        }
+    }
+
+    protected function refreshConsoleSize(): void
+    {
+        if (0 == $this->refreshingCounter++ % 500) {
+            $this->cols = (float)exec('tput cols');
+            $this->rows = (float)exec('tput lines');
         }
     }
 

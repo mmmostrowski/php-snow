@@ -1,4 +1,6 @@
-<?php namespace TechBit\Snow\Animation\Wind;
+<?php declare(strict_types=1);
+
+namespace TechBit\Snow\Animation\Wind;
 
 use TechBit\Snow\Animation\Object\IAnimationAliveObject;
 use TechBit\Snow\Animation\Snow\ParticlesSet;
@@ -8,62 +10,29 @@ use TechBit\Snow\Math\PerlinNoise1D;
 
 class StaticWind implements IAnimationAliveObject, IWind
 {
-    /**
-     * @var float
-     */
-    protected $directionX = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $directionY = 0.0;
+    protected float $time = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $strengthMax = 0.0;
+    protected float $directionX = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $strengthMin = 0.0;
+    protected float $directionY = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $time = 0.0;
-    /**
-     * @var float
-     */
-    protected $windVariation = 1.0;
+    protected float $strengthMax = 0.0;
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected float $strengthMin = 0.0;
 
-    /**
-     * @var PerlinNoise1D
-     */
-    protected $windStrengthNoise;
-    /**
-     * @var PerlinNoise1D
-     */
-    protected $windDirectionNoise;
-    /**
-     * @var ParticlesSet
-     */
-    protected $particles;
+    protected float $windVariation = 1.0;
 
-    public function __construct(PerlinNoise1D $windStrengthNoise, PerlinNoise1D $windDirectionNoise, Config $config, ParticlesSet $particles)
+
+    public function __construct(
+        protected readonly PerlinNoise1D $windStrengthNoise,
+        protected readonly PerlinNoise1D $windDirectionNoise,
+        protected readonly Config $config,
+        protected readonly ParticlesSet $particles )
     {
-        $this->windStrengthNoise = $windStrengthNoise;
-        $this->windDirectionNoise = $windDirectionNoise;
-        $this->config = $config;
-        $this->particles = $particles;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->strengthMin = $this->config->windGlobalStrengthMin();
         $this->strengthMax = $this->config->windGlobalStrengthMax();
@@ -71,18 +40,18 @@ class StaticWind implements IAnimationAliveObject, IWind
         $this->generateNewWindDirection();
     }
 
-    public function update()
+    public function update(): void
     {
         $this->time += 0.01 * $this->windVariation;
         $this->generateNewWindDirection();
     }
 
-    public function moveParticle($idx)
+    public function moveParticle(int $idx): void
     {
         $this->particles->moveBy($idx, $this->directionX, $this->directionY);
     }
 
-    protected function generateNewWindDirection()
+    protected function generateNewWindDirection(): void
     {
         $direction = $this->windStrengthNoise->generateInRange($this->time / 10,
             -(M_PI / 2),

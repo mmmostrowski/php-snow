@@ -1,39 +1,31 @@
-<?php namespace TechBit\Snow\Animation\Renderer;
+<?php declare(strict_types=1);
+
+namespace TechBit\Snow\Animation\Renderer;
 
 use TechBit\Snow\Animation\Snow\ParticlesSet;
 use TechBit\Snow\Console\Console;
+use TechBit\Snow\Console\ConsoleColor;
 
 
 class Renderer
 {
 
-    /**
-     * @var Console
-     */
-    protected $console;
-
-    /**
-     * @var ParticlesSet
-     */
-    protected $set;
-
-
-    public function __construct(Console $console, ParticlesSet $set)
+    public function __construct(
+        protected readonly Console $console,
+        protected readonly ParticlesSet $set)
     {
-        $this->console = $console;
-        $this->set = $set;
     }
 
-    public function removeParticle($idx)
+    public function removeParticle(int $idx): void
     {
         $this->console->printAt(
-            $this->set->x($idx),
-            $this->set->y($idx),
+            (int)$this->set->x($idx),
+            (int)$this->set->y($idx),
             ' '
         );
     }
 
-    public function renderParticle($idx)
+    public function renderParticle(int $idx): void
     {
         $this->console->printAt(
             $this->set->x($idx),
@@ -42,19 +34,19 @@ class Renderer
         );
     }
 
-    public function renderBasisParticle($x, $y, $shape)
+    public function renderBasisParticle(int $x, int $y, $shape): void
     {
         $this->console->printAt($x, $y, $shape);
     }
 
-    public function renderBackgroundParticle($x, $y, $char, $color)
+    public function renderBackgroundParticle(float $x, float $y, string $char, ConsoleColor $color): void
     {
-        $this->console->enableColor($color);
+        $this->console->switchToColor($color);
         $this->console->printAt($x, $y, $char);
-        $this->console->clearFormatting();
+        $this->console->resetColor();
     }
 
-    public function clearWholeWindow()
+    public function clearWindow(): void
     {
         $this->console->clear();
     }

@@ -1,8 +1,6 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Snow;
-
 
 class ParticlesSet
 {
@@ -12,122 +10,80 @@ class ParticlesSet
     const MOMENTUM_X = 3;
     const MOMENTUM_Y = 4;
 
-    /**
-     * @var array[]
-     */
-    protected $particles = [];
+    protected array $particles = [];
 
-    /**
-     * @var int
-     */
-    protected $iterator = 0;
+    protected int $counter = 0;
 
 
-    public function addNew(array $data)
+    public function addNew(array $data): int
     {
-        $this->particles[$this->iterator] = $data + [];
-        return $this->iterator++;
+        $this->particles[$this->counter] = $data;
+        return $this->counter++;
     }
 
-    /**
-     * @return array[]
-     */
-    public function all()
+    public function all(): array
     {
         return $this->particles;
     }
 
-    /**
-     * @return int[]
-     */
-    public function allIndexes()
-    {
-        return array_keys($this->particles);
-    }
 
-
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->particles);
     }
 
-    /**
-     * @return float
-     */
-    public function x($idx)
+    public function x(int $idx): float
     {
         return $this->particles[$idx][self::X];
     }
 
-    /**
-     * @return float
-     */
-    public function y($idx)
+    public function y(int $idx): float
     {
         return $this->particles[$idx][self::Y];
     }
 
-    /**
-     * @return string
-     */
-    public function shape($idx)
+    public function shape(int $idx): string
     {
         return $this->particles[$idx][self::SHAPE];
     }
 
-    public function moveTo($idx, $x, $y)
-    {
-        $this->particles[$idx][self::X] = $x;
-        $this->particles[$idx][self::Y] = $y;
-    }
-
-    public function moveBy($idx, $dX, $dY)
+    public function moveBy(int $idx, float $dX, float $dY): void
     {
         $this->particles[$idx][self::X] += $dX;
         $this->particles[$idx][self::Y] += $dY;
     }
 
-    public function moveByX($idx, $dx)
+    public function moveByX(int $idx, float $dx): void
     {
         $this->particles[$idx][self::X] += $dx;
     }
 
-    public function moveByY($idx, $dy)
+    public function moveByY(int $idx, float $dy): void
     {
         $this->particles[$idx][self::Y] += $dy;
     }
 
-    public function remove($idx)
+    public function remove(int $idx): void
     {
         unset($this->particles[$idx]);
     }
 
-    public function moveByArr($idx, $delta)
-    {
-        $this->particles[$idx][self::X] += $delta[0];
-        $this->particles[$idx][self::Y] += $delta[1];
-    }
-
-    public function updateMomentum($idx, $dx, $dy)
+    public function updateMomentum(int $idx, float $dx, float $dy): void
     {
         $this->particles[$idx][self::MOMENTUM_X] += $dx;
         $this->particles[$idx][self::MOMENTUM_Y] += $dy;
     }
 
-    public function updateMomentumArr($idx, $data)
+    public function updateMomentumArr(int $idx, array $data): void
     {
         $this->particles[$idx][self::MOMENTUM_X] += $data[0];
         $this->particles[$idx][self::MOMENTUM_Y] += $data[1];
     }
 
-    public function moveByMomentum($idx)
+    public function moveByMomentum(int $idx): void
     {
         $this->particles[$idx][self::X] += $this->particles[$idx][self::MOMENTUM_X];
         $this->particles[$idx][self::Y] += $this->particles[$idx][self::MOMENTUM_Y];
     }
-
 
 }

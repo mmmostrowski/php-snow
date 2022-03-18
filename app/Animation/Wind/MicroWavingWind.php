@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Wind;
 
@@ -9,49 +9,32 @@ use TechBit\Snow\Config\Config;
 
 class MicroWavingWind implements IAnimationAliveObject, IWind
 {
-    /**
-     * @var float
-     */
-    protected $microMovementConstant = 0.0;
 
-    /**
-     * @var
-     */
-    protected $microMovementFrequency = 0.0;
+    protected float $microMovementConstant = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $microMovementTime = 0.0;
+    protected float $microMovementFrequency = 0.0;
 
-    /**
-     * @var ParticlesSet
-     */
-    protected $particles;
+    protected float $microMovementTime = 0.0;
 
-    /**
-     * @var Config
-     */
-    protected $config;
 
-    public function __construct(ParticlesSet $particles, Config $config)
+    public function __construct(
+        protected readonly ParticlesSet $particles,
+        protected readonly Config $config )
     {
-        $this->particles = $particles;
-        $this->config = $config;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->microMovementConstant = $this->config->microMovementPower();
         $this->microMovementFrequency = $this->config->microMovementFrequency();
     }
 
-    public function update()
+    public function update(): void
     {
         $this->microMovementTime += 0.5;
     }
 
-    public function moveParticle($idx)
+    public function moveParticle(int $idx): void
     {
         if ($this->microMovementFrequency) {
             $offset = $idx;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Config\Preset;
 
@@ -8,57 +8,57 @@ use TechBit\Snow\Config\Config;
 class CalmPreset extends Config
 {
 
-    public function snowProducingTempo()
+    public function snowProducingTempo(): int
     {
-        return parent::snowProducingTempo() / 4;
+        return (int)(parent::snowProducingTempo() / 4);
     }
 
-    public function windBlowsMaxStrength()
+    public function windBlowsMaxStrength(): int
     {
-        return parent::windBlowsMaxStrength() / 3;
+        return (int)(parent::windBlowsMaxStrength() / 3);
     }
 
-    public function windBlowsMinStrength()
+    public function windBlowsMinStrength(): int
     {
-        return parent::windBlowsMinStrength() / 3;
+        return (int)(parent::windBlowsMinStrength() / 3);
     }
 
-    public function windBlowsFrequency()
+    public function windBlowsFrequency(): int
     {
-        return parent::windBlowsFrequency() / 2;
+        return (int)(parent::windBlowsFrequency() / 2);
     }
 
-    public function windBlowsMaxAnimationLength()
+    public function windBlowsMaxAnimationLength(): int
     {
-        return parent::windBlowsMaxAnimationLength() / 6;
+        return (int)(parent::windBlowsMaxAnimationLength() / 6);
     }
 
-    public function windBlowsMinAnimationLength()
+    public function windBlowsMinAnimationLength(): int
     {
-        return parent::windBlowsMinAnimationLength() / 6;
+        return (int)(parent::windBlowsMinAnimationLength() / 6);
     }
 
-    public function windFieldStrengthMax()
+    public function windFieldStrengthMax(): int
     {
-        return parent::windFieldStrengthMax() / 10;
+        return (int)(parent::windFieldStrengthMax() / 10);
     }
 
-    public function windFieldStrengthMin()
+    public function windFieldStrengthMin(): int
     {
-        return parent::windFieldStrengthMin() / 10;
+        return (int)(parent::windFieldStrengthMin() / 10);
     }
 
-    public function windGlobalStrengthMin()
+    public function windGlobalStrengthMin(): float
     {
         return parent::windGlobalStrengthMin() / 10;
     }
 
-    public function windGlobalStrengthMax()
+    public function windGlobalStrengthMax(): float
     {
         return parent::windGlobalStrengthMax() / 10;
     }
 
-    public function windFieldVariation()
+    public function windFieldVariation(): float
     {
         return parent::windFieldVariation() / 2;
     }

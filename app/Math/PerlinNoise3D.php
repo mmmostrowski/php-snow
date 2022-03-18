@@ -1,29 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Math;
+
+use Perlin;
 
 
 class PerlinNoise3D
 {
-    protected $num;
 
-    /**
-     * @var \Perlin
-     */
-    protected $perlin;
-
-    public function __construct()
+    public function __construct(
+        protected readonly Perlin $perlin)
     {
-        $this->perlin = new \Perlin();
     }
 
-    public function initialize($size)
+    public function initialize(float $size): void
     {
-        $this->perlin = new \Perlin();
         $this->perlin->_default_size = $size;
     }
 
-    public function generate($x, $y, $z)
+    public function generate(float $x, float $y, float $z): float
     {
         return $this->perlin->noise($x, $y, $z);
     }

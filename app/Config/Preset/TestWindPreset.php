@@ -1,4 +1,6 @@
-<?php namespace TechBit\Snow\Config\Preset;
+<?php declare(strict_types=1);
+
+namespace TechBit\Snow\Config\Preset;
 
 use TechBit\Snow\Config\Config;
 
@@ -11,7 +13,7 @@ class TestWindPreset extends Config
 //        return 100000;
 //    }
 
-    public function snowProbabilityOfProducingFromTop()
+    public function snowProbabilityOfProducingFromTop(): int
     {
         return 0;
     }
@@ -21,14 +23,14 @@ class TestWindPreset extends Config
 //        return 0;
 //    }
 
-    public function windGlobalStrengthMin()
+    public function windGlobalStrengthMin(): float
     {
-        return 0;
+        return 0.0;
     }
 
-    public function windGlobalStrengthMax()
+    public function windGlobalStrengthMax(): float
     {
-        return 0;
+        return 0.0;
 
     }
 //
@@ -48,12 +50,12 @@ class TestWindPreset extends Config
 //        return 0;
 //    }
 
-    public function snowProducingTempo()
+    public function snowProducingTempo(): int
     {
         return parent::snowProducingTempo() * 3;
     }
 
-    public function snowMaxNumOfFlakesAtOnce()
+    public function snowMaxNumOfFlakesAtOnce(): int
     {
         return parent::snowMaxNumOfFlakesAtOnce() * 3;
     }
@@ -63,17 +65,17 @@ class TestWindPreset extends Config
 //        return 0;
 //    }
 //
-    public function microMovementPower()
+    public function microMovementPower(): float
     {
-        return 0;
+        return 0.0;
     }
 
-    public function showScene()
+    public function showScene(): bool
     {
         return false;
     }
 
-    public function showFps()
+    public function showFps(): bool
     {
         return true;
     }

@@ -1,42 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Math;
+
+use Perlin;
 
 
 class PerlinNoise1D
 {
-    protected $num;
 
-    /**
-     * @var \Perlin
-     */
-    protected $perlin;
-    /**
-     * @var Interpolation
-     */
-    protected $interpolation;
-
-    public function __construct(Interpolation $interpolation)
+    public function __construct(
+        protected readonly Perlin $perlin)
     {
-        $this->perlin = new \Perlin();
-        $this->interpolation = $interpolation;
     }
 
-    public function initialize($size)
+    public function generate(float $x): float
     {
-        $this->perlin = new \Perlin();
-        $this->perlin->_default_size = $size;
+        return (float)$this->perlin->random1D($x);
     }
 
-    public function generate($x)
+    public function generateInRange(float $x, float $from, float $to): float
     {
-        return $this->perlin->random1D($x);
-    }
-
-    public function generateInRange($x, $from, $to)
-    {
-        $float = $this->generate($x);
-        return $this->interpolation->interpolateRatio($from, $to, $float / 2 + 0.5);
+        return $from + ($this->generate($x) / 2 + 0.5) * ($to - $from);
     }
 
 }

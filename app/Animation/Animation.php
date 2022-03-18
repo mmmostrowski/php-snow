@@ -1,5 +1,8 @@
-<?php namespace TechBit\Snow\Animation;
+<?php declare(strict_types=1);
 
+namespace TechBit\Snow\Animation;
+
+use Psr\Container\ContainerExceptionInterface;
 use TechBit\Snow\Animation\Frame\FrameStabilizer;
 use TechBit\Snow\Animation\Object\Collector;
 use TechBit\Snow\Animation\Renderer\Renderer;
@@ -10,46 +13,20 @@ use TechBit\Snow\Console\Console;
 class Animation
 {
 
-    /**
-     * @var Console
-     */
-    protected $console;
-    /**
-     * @var Config
-     */
-    protected $config;
-    /**
-     * @var FrameStabilizer
-     */
-    protected $stabilizer;
-    /**
-     * @var Collector
-     */
-    protected $collector;
-    /**
-     * @var AnimationObjectsList
-     */
-    protected $animationObjects;
-    /**
-     * @var Renderer
-     */
-    protected $renderer;
-
     public function __construct(
-        Console   $console, Config $config, FrameStabilizer $stabilizer,
-        Collector $collector, AnimationObjectsList $animationObjects,
-        Renderer  $renderer
-    )
+        protected readonly Console $console,
+        protected readonly Config $config,
+        protected readonly FrameStabilizer $stabilizer,
+        protected readonly Collector $collector,
+        protected readonly AnimationObjectsList $animationObjects,
+        protected readonly Renderer $renderer)
     {
-        $this->console = $console;
-        $this->config = $config;
-        $this->stabilizer = $stabilizer;
-        $this->collector = $collector;
-        $this->animationObjects = $animationObjects;
-        $this->renderer = $renderer;
     }
 
-    public function initialize()
+    /**
+     * @throws ContainerExceptionInterface
+     */
+    public function initialize(): void
     {
         $this->collector->collect($this->animationObjects);
         foreach ($this->collector->allObjects() as $object) {
@@ -57,9 +34,9 @@ class Animation
         }
     }
 
-    public function play()
+    public function play(): void
     {
-        $this->renderer->clearWholeWindow();
+        $this->renderer->clearWindow();
 
         $visibleObjects = $this->collector->allVisibleObjects();
         $aliveObjects = $this->collector->allAliveObjects();
@@ -87,6 +64,5 @@ class Animation
             }
         }
     }
-
 
 }

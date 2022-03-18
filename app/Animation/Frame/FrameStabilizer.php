@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Frame;
 
@@ -8,59 +8,41 @@ use TechBit\Snow\Config\Config;
 class FrameStabilizer implements IAnimationObject
 {
 
-    /**
-     * @var float
-     */
-    protected $lastFrame = 0.0;
+    protected float $lastFrame = 0.0;
 
-    /**
-     * @var float
-     */
-    protected $targetFps = 0.0;
+    protected float $targetFps = 0.0;
 
-    /**
-     * @var int
-     */
-    protected $intervalMs = 0;
+    protected int $intervalMs = 0;
 
-    /**
-     * @var int
-     */
-    protected $lastSecond = 0;
+    protected int $lastSecond = 0;
 
-    /**
-     * @var int
-     */
-    protected $frameCounter = 0;
+    protected int $frameCounter = 0;
 
-    /**
-     * @var int
-     */
-    protected $currentFps = 0;
+    protected int $currentFps = 0;
 
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    public function __construct(Config $config)
+    public function __construct(
+        protected readonly Config $config)
     {
-        $this->config = $config;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
-        $this->targetFps = (int)$this->config->fps();
+        $this->targetFps = $this->config->fps();
         $this->intervalMs = (int)(1000 / $this->targetFps);
         $this->lastSecond = (int)microtime(true);;
     }
 
-    public function beginFrame()
+    public function fps(): int
+    {
+        return $this->currentFps;
+    }
+
+    public function beginFrame(): void
     {
         $this->lastFrame = microtime(true);
     }
 
-    public function endFrame()
+    public function endFrame(): void
     {
         $nowMicro = microtime(true);
         $nowSec = (int)$nowMicro;
@@ -74,15 +56,10 @@ class FrameStabilizer implements IAnimationObject
 
         $deltaSec = $nowMicro - $this->lastFrame;
 
-        $howMuchWaitMs = $this->intervalMs - $deltaSec * 1000;
-        if ($howMuchWaitMs > 0) {
-            usleep((int)($howMuchWaitMs * 1000));
+        $waitMs = $this->intervalMs - $deltaSec * 1000;
+        if ($waitMs > 0) {
+            usleep((int)($waitMs * 1000));
         }
-    }
-
-    public function fps()
-    {
-        return $this->currentFps;
     }
 
 }

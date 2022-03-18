@@ -1,44 +1,30 @@
-<?php namespace TechBit\Snow\Animation\Scene;
+<?php declare(strict_types=1);
+
+namespace TechBit\Snow\Animation\Scene;
 
 use TechBit\Snow\Animation\Object\IAnimationVisibleObject;
 use TechBit\Snow\Animation\Snow\SnowBasis;
 use TechBit\Snow\Config\Config;
 use TechBit\Snow\Console\Console;
+use TechBit\Snow\Console\ConsoleColor;
 
 
 class CustomScene implements IAnimationVisibleObject
 {
-    /**
-     * @var UserSceneProvider
-     */
-    protected $userCustomScene;
 
-    /**
-     * @var Config
-     */
-    protected $config;
-    /**
-     * @var SnowBasis
-     */
-    protected $basis;
-    /**
-     * @var Console
-     */
-    protected $console;
-
-    public function __construct(Config $config, SnowBasis $basis, Console $console, UserSceneProvider $userSceneProvider)
-    {
-        $this->config = $config;
-        $this->basis = $basis;
-        $this->console = $console;
-        $this->userCustomScene = $userSceneProvider;
-    }
-
-    public function initialize()
+    public function __construct(
+        protected readonly Config $config,
+        protected readonly SnowBasis $basis,
+        protected readonly Console $console,
+        protected readonly UserSceneProvider $userCustomScene)
     {
     }
 
-    public function renderFirstFrame()
+    public function initialize(): void
+    {
+    }
+
+    public function renderFirstFrame(): void
     {
         if (!$this->config->showScene()) {
             return;
@@ -46,12 +32,14 @@ class CustomScene implements IAnimationVisibleObject
 
         $this->basis->drawGround();
 
-        $chars = $this->userCustomScene->contentText();
-
-        $this->basis->drawCharsInCenter($chars, 0, 0, "light_blue");
+        $this->basis->drawCharsInCenter(
+            $this->userCustomScene->contentText(),
+            0, 0,
+            ConsoleColor::LIGHT_BLUE
+        );
     }
 
-    public function renderLoopFrame()
+    public function renderLoopFrame(): void
     {
     }
 

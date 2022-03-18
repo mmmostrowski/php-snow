@@ -1,56 +1,60 @@
-<?php namespace TechBit\Snow\Animation\Scene;
+<?php declare(strict_types=1);
+
+namespace TechBit\Snow\Animation\Scene;
 
 use TechBit\Snow\Animation\Object\IAnimationVisibleObject;
 use TechBit\Snow\Animation\Snow\SnowBasis;
 use TechBit\Snow\Config\Config;
 use TechBit\Snow\Console\Console;
+use TechBit\Snow\Console\ConsoleColor;
 
 
 class Scene implements IAnimationVisibleObject
 {
 
-    /**
-     * @var Config
-     */
-    protected $config;
-    /**
-     * @var SnowBasis
-     */
-    protected $basis;
-    /**
-     * @var Console
-     */
-    protected $console;
+    protected readonly string $credentialsText;
 
-    public function __construct(Config $config, SnowBasis $basis, Console $console)
+    public function __construct(
+        protected readonly Config $config,
+        protected readonly SnowBasis $basis,
+        protected readonly Console $console)
     {
-        $this->config = $config;
-        $this->basis = $basis;
-        $this->console = $console;
+        $this->credentialsText = "[ 2022 (C) Maciej Ostrowski | https://github.com/mmmostrowski ]";
     }
 
-    public function initialize()
+    public function initialize(): void
     {
     }
 
-    public function renderFirstFrame()
+    public function renderFirstFrame(): void
     {
+        if (!$this->config->showScene()) {
+            return;
+        }
+
         $this->basis->drawGround();
 
-        if ($this->config->showScene()) {
-            $this->drawPHP();
-            $this->drawIsAwesome();
-            $this->drawCredentials();
-        }
+        $this->basis->drawCharsInCenter($this->drawPHP(),
+            0,
+            -7,
+            ConsoleColor::LIGHT_BLUE);
+
+        $this->basis->drawCharsInCenter($this->drawIsAwesome(),
+            0,
+            10,
+            ConsoleColor::BLUE
+        );
+
+        $this->basis->drawChars($this->credentialsText,
+            (int)($this->console->maxX() - strlen($this->credentialsText) / 2),
+            (int)($this->console->maxY()),
+            ConsoleColor::BLUE
+        );
     }
 
-    public function renderLoopFrame()
+    protected function drawPHP(): string
     {
-    }
-
-    protected function drawPHP()
-    {
-        $chars = <<<EOL
+        return <<<EOL
 PPPPPPPPPPPPPPPPP        HHHHHHHHH     HHHHHHHHH     PPPPPPPPPPPPPPPPP   
 P::::::::::::::::P       H:::::::H     H:::::::H     P::::::::::::::::P  
 P::::::PPPPPP:::::P      H:::::::H     H:::::::H     P::::::PPPPPP:::::P 
@@ -68,14 +72,11 @@ P::::::::P               H:::::::H     H:::::::H     P::::::::P
 P::::::::P               H:::::::H     H:::::::H     P::::::::P          
 PPPPPPPPPP               HHHHHHHHH     HHHHHHHHH     PPPPPPPPPP                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 EOL;
-
-
-        $this->basis->drawCharsInCenter($chars, 0, -7, "light_blue");
     }
 
-    protected function drawIsAwesome()
+    protected function drawIsAwesome(): string
     {
-        $chars = <<<EOL
+        return <<<EOL
                           _                                                                            
 68b                      dM.                                                                           
 Y89                     ,MMb                                                                           
@@ -88,19 +89,10 @@ ___   ____              d'YM.    ____    _    ___   ____     ____     _____   __
  MM L    ,MM         d'      YM.    `MM'  `MM'    YM    d9 L    ,MM YM.   ,M9  MM    MM    MM YM    d9 
 _MM_MYMMMM9        _dM_     _dMM_    YP    YP      YMMMM9  MYMMMM9   YMMMMM9  _MM_  _MM_  _MM_ YMMMM9                                                                                                                                                                                                               
 EOL;
-
-        $this->basis->drawCharsInCenter($chars, 0, 10, "blue");
     }
 
-    protected function drawCredentials()
+    public function renderLoopFrame(): void
     {
-        $text = "[ 2022 (C) Maciej Ostrowski | https://github.com/mmmostrowski ]";
-
-        $this->basis->drawChars($text,
-            $this->console->maxX() - strlen($text) / 2,
-            $this->console->maxY(),
-            "blue"
-        );
     }
 
 }

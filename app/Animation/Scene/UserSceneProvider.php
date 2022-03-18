@@ -1,42 +1,49 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Scene;
+
 
 class UserSceneProvider
 {
 
-    /**
-     * @var string
-     */
-    protected $customScene = '';
+    protected string $customScene = '';
 
 
-    public function makeCustomScene($text)
+    public function makeFromUserArgument(string $argument): bool
     {
-        $this->customScene = $text;
+        if ($argument === '') {
+            return false;
+        }
+
+        if (str_starts_with($argument, 'base64:')) {
+            $customSceneContent = (string)@base64_decode(preg_replace('/^base64:/', '', $argument));
+        } else {
+            $customSceneContent = (string)@file_get_contents($argument);
+        }
+
+        if ($customSceneContent === '') {
+            return false;
+        }
+
+        $this->customScene = $customSceneContent;
+        return true;
     }
 
-
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
-        return !empty($this->customScene) || trim($this->contentText()) != '';
+        return $this->contentText() != '';
     }
 
-    /**
-     * @return string
-     */
-    public function contentText()
+    public function contentText(): string
     {
-        if (!empty($this->customScene)) {
+        if ($this->customScene != '') {
             return $this->customScene;
         }
 
-        if (!file_exists("/app/scene.txt")) {
-            return '';
+        if (file_exists("/app/scene.txt")) {
+            return file_get_contents("/app/scene.txt");
         }
-        return file_get_contents("/app/scene.txt", "rt");
+
+        return '';
     }
 }

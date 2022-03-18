@@ -1,23 +1,19 @@
-<?php namespace TechBit\Snow\Config\Preset;
+<?php declare(strict_types=1);
 
+namespace TechBit\Snow\Config\Preset;
+
+use TechBit\Snow\Animation\Wind\NoWind;
 use TechBit\Snow\Config\Config;
 
 
 class NoWindPreset extends Config
 {
 
-    public function windFieldStrengthMax()
+    public function windForces(): array
     {
-        return 0;
+        return [
+            NoWind::class,
+        ];
     }
 
-    public function windGlobalStrengthMin()
-    {
-        return 0;
-    }
-
-    public function windGlobalStrengthMax()
-    {
-        return 0;
-    }
 }

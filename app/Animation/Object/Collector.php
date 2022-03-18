@@ -1,42 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Object;
 
+use Psr\Container\ContainerExceptionInterface;
 use TechBit\Snow\Animation\AnimationObjectsList;
 use Psr\Container\ContainerInterface;
-use Zend\Di\Di;
 
 class Collector
 {
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $di;
+    protected array $objects = [];
 
-    /**
-     * @var IAnimationObject[]
-     */
-    protected $objects = [];
+    protected array $visibleObjects = [];
 
-    /**
-     * @var IAnimationVisibleObject[]
-     */
-    protected $visibleObjects = [];
+    protected array $aliveObjects = [];
 
-    /**
-     * @var IAnimationAliveObject[]
-     */
-    protected $aliveObjects = [];
 
-    public function __construct(ContainerInterface $di)
+    public function __construct(
+        protected readonly ContainerInterface $di)
     {
-        $this->di = $di;
     }
 
-    public function collect(AnimationObjectsList $all)
+    /**
+     * @throws ContainerExceptionInterface
+     */
+    public function collect(AnimationObjectsList $all): void
     {
-        foreach (array_unique($all->allElements()) as $class) {
+        foreach ($all->allElements() as $class) {
             $object = $this->di->get($class);
             if ($object instanceof IAnimationObject) {
                 $this->objects[$class] = $object;
@@ -53,7 +43,7 @@ class Collector
     /**
      * @return IAnimationObject[]
      */
-    public function allObjects()
+    public function allObjects(): array
     {
         return $this->objects;
     }
@@ -61,7 +51,7 @@ class Collector
     /**
      * @return IAnimationVisibleObject[]
      */
-    public function allVisibleObjects()
+    public function allVisibleObjects(): array
     {
         return $this->visibleObjects;
     }
@@ -69,10 +59,9 @@ class Collector
     /**
      * @return IAnimationAliveObject[]
      */
-    public function allAliveObjects()
+    public function allAliveObjects(): array
     {
         return $this->aliveObjects;
     }
-
 
 }

@@ -1,18 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Config;
 
-use TechBit\Snow\Config\Preset\CalmPreset;
 use TechBit\Snow\Config\Preset\ClassicalPreset;
 use TechBit\Snow\Config\Preset\MassiveSnowPreset;
 use TechBit\Snow\Config\Preset\SnowyPreset;
 use TechBit\Snow\Config\Preset\WindyPreset;
 
 
-class DefaultPresets
+class DefaultPresetsList
 {
 
-    public function presets()
+    public function presetsList(): array
     {
         return [
             ClassicalPreset::class => 90,

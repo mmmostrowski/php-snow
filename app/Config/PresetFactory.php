@@ -1,37 +1,29 @@
-<?php namespace TechBit\Snow\Config;
+<?php declare(strict_types=1);
 
+namespace TechBit\Snow\Config;
 
-use TechBit\Snow\Config\Preset\SnowyPreset;
-use TechBit\Snow\Config\Preset\WindyPreset;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerInterface;
 
 
 class PresetFactory
 {
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $di;
-
-    /**
-     * @var DefaultPresets
-     */
-    protected $defaultPresets;
-
-    public function __construct(ContainerInterface $di, DefaultPresets $defaultPresets)
+    public function __construct(
+        protected readonly ContainerInterface $di,
+        protected readonly DefaultPresetsList $defaultPresets)
     {
-        $this->di = $di;
-        $this->defaultPresets = $defaultPresets;
     }
 
     /**
-     * @return Config
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function provide($type)
+    public function create(string $type): Config
     {
-        if ($type === null) {
-            return $this->di->get(Config::class);
+        if ($type === '' || $type == 'random') {
+            return $this->createRandom();
         }
 
         $className = ucwords($type, '_');
@@ -41,9 +33,13 @@ class PresetFactory
         return $this->di->get($className);
     }
 
-    public function provideRandom()
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function createRandom(): Config
     {
-        $presets = $this->defaultPresets->presets();
+        $presets = $this->defaultPresets->presetsList();
         $total = array_sum($presets);
         $random = rand(0, $total);
         $sum = 0;

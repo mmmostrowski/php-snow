@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Snow;
 
@@ -11,42 +10,30 @@ use TechBit\Snow\Console\Console;
 class SnowGenerator implements IAnimationObject
 {
 
-    /**
-     * @var bool
-     */
-    protected $debug = false;
+    protected int $howMuchSnowIsGeneratedAtTop;
 
-    /**
-     * @var
-     */
-    protected $howMuchSnowIsGeneratedAtTop;
+    protected array $nullParticle = [
+        ParticlesSet::X => -1,
+        ParticlesSet::Y => -1,
+        ParticlesSet::SHAPE => '',
+        ParticlesSet::MOMENTUM_X => 0.0,
+        ParticlesSet::MOMENTUM_Y => 0.0,
+    ];
 
-    /**
-     * @var Config
-     */
-    protected $config;
-    /**
-     * @var Console
-     */
-    protected $console;
-    /**
-     * @var FlakeShapes
-     */
-    protected $shapes;
 
-    public function __construct(Config $config, Console $console, FlakeShapes $shapes)
+    public function __construct(
+        protected readonly Config $config,
+        protected readonly Console $console,
+        protected readonly FlakeShapes $shapes)
     {
-        $this->config = $config;
-        $this->console = $console;
-        $this->shapes = $shapes;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->howMuchSnowIsGeneratedAtTop = $this->config->snowProbabilityOfProducingFromTop();
     }
 
-    public function generateFlakeParticle()
+    public function generateFlakeParticle(): array
     {
         $shape = $this->shapes->randomShape();
 
@@ -56,34 +43,23 @@ class SnowGenerator implements IAnimationObject
         return $this->randomInCenterArea($shape);
     }
 
-    protected function randomAtTop($shape)
+    protected function randomAtTop(string $shape): array
     {
-        $w2 = (int)($this->console->width() / 2);
+        $halfWidth = (int)($this->console->width() / 2);
         return [
-                ParticlesSet::X => rand($this->console->minX() - $w2, $this->console->maxX() + $w2),
+                ParticlesSet::X => rand((int)$this->console->minX() - $halfWidth, (int)$this->console->maxX() + $halfWidth),
                 ParticlesSet::Y => $this->console->minY(),
                 ParticlesSet::SHAPE => $shape,
-            ] + $this->particleDefaults();
+            ] + $this->nullParticle;
     }
 
-    protected function randomInCenterArea($shape)
+    protected function randomInCenterArea(string $shape): array
     {
         return [
-                ParticlesSet::X => rand($this->console->minX(), $this->console->maxX()),
-                ParticlesSet::Y => rand($this->console->minY(), $this->console->maxY()),
+                ParticlesSet::X => rand((int)$this->console->minX(), (int)$this->console->maxX()),
+                ParticlesSet::Y => rand((int)$this->console->minY(), (int)$this->console->maxY()),
                 ParticlesSet::SHAPE => $shape,
-            ] + $this->particleDefaults();
-    }
-
-    protected function particleDefaults()
-    {
-        return [
-            ParticlesSet::X => -1,
-            ParticlesSet::Y => -1,
-            ParticlesSet::SHAPE => '',
-            ParticlesSet::MOMENTUM_X => 0.0,
-            ParticlesSet::MOMENTUM_Y => 0.0,
-        ];
+            ] + $this->nullParticle;
     }
 
 }

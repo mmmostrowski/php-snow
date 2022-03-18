@@ -1,12 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Object;
 
 
 interface IAnimationVisibleObject extends IAnimationObject
 {
-    public function renderFirstFrame();
 
-    public function renderLoopFrame();
+    public function renderFirstFrame(): void;
+
+    public function renderLoopFrame(): void;
 
 }

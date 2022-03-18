@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Wind;
 
@@ -6,7 +6,8 @@ namespace TechBit\Snow\Animation\Wind;
 class NoWind implements IWind
 {
 
-    public function moveParticle($idx)
+    public function moveParticle(int $idx): void
     {
     }
+
 }

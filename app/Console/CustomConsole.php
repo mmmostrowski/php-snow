@@ -1,5 +1,4 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Console;
 
@@ -7,61 +6,41 @@ namespace TechBit\Snow\Console;
 class CustomConsole extends Console
 {
 
+    private float $overriddenMaxX = 0.0;
 
-    /**
-     * @var int
-     */
-    private $overriddenMaxX = 0;
+    private float $overriddenMinX = 0.0;
 
-    /**
-     * @var int
-     */
-    private $overriddenMinX = 0;
+    private float $overriddenMaxY = 0.0;
 
-    /**
-     * @var int
-     */
-    private $overriddenMaxY = 0;
-
-    /**
-     * @var int
-     */
-    private $overriddenMinY = 0;
-
-    /**
-     * @var bool
-     */
-    private $overriddenWindow = false;
+    private float $overriddenMinY = 0.0;
 
 
-    public function overrideWindow($minX, $maxX, $minY, $maxY)
+    public function overrideWindow(float $minX, float $maxX, float $minY, float $maxY)
     {
-        $this->overriddenWindow = true;
-        $this->overriddenMaxX = (int)$maxX;
-        $this->overriddenMinX = (int)$minX;
-        $this->overriddenMaxY = (int)$maxY;
-        $this->overriddenMinY = (int)$minY;
+        $this->overriddenMaxX = $maxX;
+        $this->overriddenMinX = $minX;
+        $this->overriddenMaxY = $maxY;
+        $this->overriddenMinY = $minY;
     }
 
-    public function minX()
+    public function minX(): float
     {
         return $this->overriddenMinX;
     }
 
-    public function maxX()
+    public function maxX(): float
     {
         return $this->overriddenMaxX;
     }
 
-    public function minY()
+    public function minY(): float
     {
         return $this->overriddenMinY;
     }
 
-    public function maxY()
+    public function maxY(): float
     {
         return $this->overriddenMaxY;
     }
-
 
 }

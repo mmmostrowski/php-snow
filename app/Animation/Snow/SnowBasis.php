@@ -1,91 +1,45 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Snow;
-
 
 use TechBit\Snow\Animation\Object\IAnimationAliveObject;
 use TechBit\Snow\Animation\Object\IAnimationVisibleObject;
 use TechBit\Snow\Animation\Renderer\Renderer;
 use TechBit\Snow\Config\Config;
 use TechBit\Snow\Console\Console;
-use TechBit\Snow\Math\Interpolation;
+use TechBit\Snow\Console\ConsoleColor;
+
 
 class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
 {
     const SHAPE = 0;
     const COUNTER = 1;
 
-    /**
-     * @var Interpolation
-     */
-    protected $interpolator;
+    protected array $staticParticles = [];
 
-    /**
-     * @var array[]
-     */
-    protected $staticParticles = [];
+    protected array $particlesToBePressed = [];
 
-    /**
-     * @var Console
-     */
-    protected $console;
+    protected int $pressingSpeedMin = 0;
 
-    /**
-     * @var FlakeShapes
-     */
-    protected $shapes;
+    protected int $pressingSpeedMax = 0;
 
-    /**
-     * @var array[]
-     */
-    protected $particlesToBePressed = [];
+    protected int $howManyParticlesNeedsToFallToBecomeGround = 0;
 
-    /**
-     * @var int
-     */
-    protected $pressingSpeedMin = 0;
+    protected int $counter = 0;
 
-    /**
-     * @var int
-     */
-    protected $pressingSpeedMax = 0;
-
-    /**
-     * @var
-     */
-    protected $howManyParticlesNeedsToFallToBecomeGround = 0;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-    /**
-     * @var Renderer
-     */
-    protected $renderer;
-
-    /**
-     * @var int
-     */
-    protected $counter = 0;
-
-    /**
-     * @var string
-     */
-    protected $pressedSnowSymbol = '';
+    protected string $pressedSnowSymbol = '';
 
 
-    public function __construct(Console $console, FlakeShapes $shapes, Config $config, Renderer $renderer)
+    public function __construct(
+        protected readonly Console $console,
+        protected readonly FlakeShapes $shapes,
+        protected readonly Config $config,
+        protected readonly Renderer $renderer )
     {
-        $this->console = $console;
-        $this->shapes = $shapes;
-        $this->config = $config;
-        $this->renderer = $renderer;
         $this->pressedSnowSymbol = $this->shapes->pressedSnowSymbol();
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->howManyParticlesNeedsToFallToBecomeGround = $this->config->snowHowManyFlakesNeedsToFallToFormAHill();
         $this->pressingSpeedMin = $this->config->snowIsPressedAfterFramesNumMin();
@@ -93,17 +47,17 @@ class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
         $this->counter = 0;
     }
 
-    public function update()
+    public function update(): void
     {
         $this->processSnowFlakesPressing();
         ++$this->counter;
     }
 
-    public function renderFirstFrame()
+    public function renderFirstFrame(): void
     {
     }
 
-    public function renderLoopFrame()
+    public function renderLoopFrame(): void
     {
         if ($this->counter % 15 != 0) {
             return;
@@ -116,68 +70,12 @@ class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
         }
     }
 
-    public function draw(array $points)
-    {
-        foreach ($points as $point) {
-            $this->drawPoint($point['x'], $point['y']);
-        }
-    }
-
-    public function drawPoint($x, $y)
-    {
-        $this->addPoint($x, $y, '');
-    }
-
-    public function drawGround()
+    public function drawGround(): void
     {
         $this->drawHLine($this->console->minX(), $this->console->maxX(), $this->console->maxY());
     }
 
-    public function drawVLine($x, $minY, $maxY)
-    {
-        for ($y = $minY; $y <= $maxY; ++$y) {
-            $this->drawPoint($x, $y);
-        }
-    }
-
-    public function drawHLine($minX, $maxX, $y)
-    {
-        for ($x = $minX; $x <= $maxX; ++$x) {
-            $this->drawPoint($x, $y);
-        }
-    }
-
-    protected function addPoint($x, $y, $shape)
-    {
-        $x = (int)$x;
-        $y = (int)$y;
-
-        $this->staticParticles[$x][$y] = [
-            self::SHAPE => $shape,
-            self::COUNTER => 0,
-        ];
-    }
-
-    protected function mergePoint($x, $y, $shape)
-    {
-        $x = (int)$x;
-        $y = (int)$y;
-
-        if ($this->staticParticles[$x][$y][self::SHAPE] != $this->pressedSnowSymbol) {
-            $this->staticParticles[$x][$y][self::SHAPE] = $shape;
-        }
-
-        if (!isset($this->staticParticles[$x][$y][self::COUNTER])) {
-            $this->staticParticles[$x][$y][self::COUNTER] = 0;
-        }
-    }
-
-    protected function addPointForPressing($x, $y)
-    {
-        $this->particlesToBePressed[(int)$x][(int)$y] = rand($this->pressingSpeedMin, $this->pressingSpeedMax);
-    }
-
-    public function mergeParticle($x, $y, $shape)
+    public function mergeParticle(float $x, float $y, string $shape): void
     {
         $x = (int)$x;
         $y = (int)$y;
@@ -194,12 +92,37 @@ class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
         }
     }
 
-    public function isHitAt($x, $y)
+    protected function mergePoint(float $x, float $y, string $shape): void
     {
-        return isset($this->staticParticles[(int)$x][(int)$y]);
+        $x = (int)$x;
+        $y = (int)$y;
+
+        if ($this->staticParticles[$x][$y][self::SHAPE] != $this->pressedSnowSymbol) {
+            $this->staticParticles[$x][$y][self::SHAPE] = $shape;
+        }
+
+        if (!isset($this->staticParticles[$x][$y][self::COUNTER])) {
+            $this->staticParticles[$x][$y][self::COUNTER] = 0;
+        }
     }
 
-    public function drawChars($chars, $posX, $posY, $color)
+    protected function addPointForPressing(float $x, float $y): void
+    {
+        $x = (int)$x;
+        $y = (int)$y;
+
+        $this->particlesToBePressed[$x][$y] = rand($this->pressingSpeedMin, $this->pressingSpeedMax);
+    }
+
+    public function isHitAt(float $x, float $y): bool
+    {
+        $x = (int)$x;
+        $y = (int)$y;
+
+        return isset($this->staticParticles[$x][$y]);
+    }
+
+    public function drawChars(string $chars, float $posX, float $posY, ConsoleColor $color): void
     {
         $lines = explode(PHP_EOL, $chars);
 
@@ -224,7 +147,7 @@ class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
         }
     }
 
-    public function drawCharsInCenter($chars, $dx, $dy, $color)
+    public function drawCharsInCenter(string $chars, float $dx, float $dy, ConsoleColor $color): void
     {
         $this->drawChars(
             $chars,
@@ -234,15 +157,41 @@ class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
         );
     }
 
-    protected function processSnowFlakesPressing()
+    protected function processSnowFlakesPressing(): void
     {
         foreach ($this->particlesToBePressed as $x => &$list) {
             foreach ($list as $y => &$counter) {
-                if (--$counter <= 0) {
-                    $this->mergePoint($x, $y, $this->pressedSnowSymbol);
-                    unset($this->particlesToBePressed[$x][$y]);
+                if (--$counter >= 0) {
+                    continue;
                 }
+
+                $this->mergePoint($x, $y, $this->pressedSnowSymbol);
+                unset($this->particlesToBePressed[$x][$y]);
             }
         }
     }
+
+    protected function addPoint(float $x, float $y, string $shape): void
+    {
+        $x = (int)$x;
+        $y = (int)$y;
+
+        $this->staticParticles[$x][$y] = [
+            self::SHAPE => $shape,
+            self::COUNTER => 0,
+        ];
+    }
+
+    protected function drawHLine(float $minX, float $maxX, float $y): void
+    {
+        for ($x = $minX; $x <= $maxX; ++$x) {
+            $this->drawPoint($x, $y);
+        }
+    }
+
+    protected function drawPoint(float $x, float $y): void
+    {
+        $this->addPoint($x, $y, '');
+    }
+
 }

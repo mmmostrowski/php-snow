@@ -1,16 +1,14 @@
-<?php
-
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Snow;
-
 
 class FlakeShapes
 {
 
-    /**
-     * @var string[]
-     */
-    protected $all = [
+    protected string $pressed = '#';
+
+    protected array $all = [
+        '*',
         '*',
         '*',
         '*',
@@ -18,25 +16,16 @@ class FlakeShapes
         "'",
         ".",
         ",",
+        "`",
     ];
 
-    protected $pressed = '#';
-
-    /**
-     * @return string[]
-     */
-    public function allShapes()
-    {
-        return $this->all;
-    }
-
-    public function randomShape()
+    public function randomShape(): string
     {
         $i = rand(0, count($this->all) - 1);
         return array_values($this->all)[$i];
     }
 
-    public function pressedSnowSymbol()
+    public function pressedSnowSymbol(): string
     {
         return $this->pressed;
     }

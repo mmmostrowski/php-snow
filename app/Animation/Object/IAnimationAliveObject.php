@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace TechBit\Snow\Animation\Object;
 
@@ -6,6 +6,6 @@ namespace TechBit\Snow\Animation\Object;
 interface IAnimationAliveObject extends IAnimationObject
 {
 
-    public function update();
+    public function update(): void;
 
 }
