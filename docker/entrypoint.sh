@@ -2,20 +2,38 @@
 set -eu
 
 function main() {
-    waitUntilTerminalSizeIsAvailable
+    if [[ "${1:-}" == "devbox" ]]; then
+        bash
+        return 0
+    fi
+
+    installVendorFolderToHost
+
+    waitUntilTerminalSizeIsAvailable 3s
 
     if [[ "${PHP_SNOW_APP_MODE:-}" != "develop" ]]; then
         terminalCleanupOnExit true
     fi
 
-    if ! "${@}"; then
+    if ! "php" "snow.php" "${@}"; then
         terminalCleanupOnExit false
     fi
 }
 
-function waitUntilTerminalSizeIsAvailable() {
-    local iterations=6
+function installVendorFolderToHost()
+{
+    if [[ -e /app/vendor/ ]] && cmp /app/vendor/composer/installed.json /app-vendor/composer/installed.json; then
+        return
+    fi
 
+    rm -rf /app/vendor/
+    cp -rf /app-vendor/ /app/vendor/
+}
+
+function waitUntilTerminalSizeIsAvailable() {
+    local waitSec="${1%s}"
+
+    local iterations=$(( waitSec * 2 ))
     while (( --iterations >= 0 )); do
         local cols
         cols="$( tput cols )"
@@ -29,9 +47,9 @@ function waitUntilTerminalSizeIsAvailable() {
 }
 
 function terminalCleanupOnExit() {
-    local enabled="${1:-true}"
+    local trapEnabled="${1:-true}"
 
-    if $enabled; then
+    if $trapEnabled; then
         trap "reset; clear"  EXIT
     else
         trap ""  EXIT

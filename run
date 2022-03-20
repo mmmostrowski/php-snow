@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+docker run -t"$( [ -t 0 ] && echo 'i' )" --rm \
+    --user="$(id -u):$(id -g)" \
+    --volume "${PWD-$(pwd)}/app/:/app/" \
+    --env PHP_SNOW_APP_MODE=develop \
+    $( docker build --file docker/Dockerfile --quiet . ) \
+    "${@}" \
+;

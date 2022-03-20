@@ -6,6 +6,7 @@
 // Originally from http://therandomuniverse.blogspot.com/2007/01/perlin-noise-your-new-best-friend.html
 // but the site appears to be down, so here is a mirror of it
 
+namespace lib;
 class Perlin
 {
 
@@ -158,7 +159,7 @@ class Perlin
     }
 
 //Same as random1D() only for 2 dimensions.
-    function random2D($x, $y                                                                                                  )
+    function random2D($x, $y)
     {
         global $size;
 

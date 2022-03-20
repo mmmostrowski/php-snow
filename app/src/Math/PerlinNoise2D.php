@@ -2,7 +2,7 @@
 
 namespace TechBit\Snow\Math;
 
-use Perlin;
+use lib\Perlin;
 
 
 class PerlinNoise2D

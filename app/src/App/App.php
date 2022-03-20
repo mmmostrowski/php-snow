@@ -2,6 +2,7 @@
 
 namespace TechBit\Snow\App;
 
+use Psr\Container\ContainerInterface;
 use TechBit\Snow\Animation\Animation;
 use TechBit\Snow\Animation\Scene\UserSceneProvider;
 use TechBit\Snow\Animation\Wind\IWind;
@@ -12,13 +13,12 @@ use TechBit\Snow\Console\Console;
 use TechBit\Snow\Console\CustomConsole;
 use TechBit\Snow\Console\InvalidConsoleSizeException;
 use Psr\Container\ContainerExceptionInterface;
-use DI\Container;
 
 
 class App
 {
 
-    public function __construct(readonly Container $container = new Container())
+    public function __construct(readonly ContainerInterface $container)
     {
     }
 
