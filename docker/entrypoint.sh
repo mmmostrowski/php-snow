@@ -2,12 +2,12 @@
 set -eu
 
 function main() {
+    installVendorFolderToHost
+
     if [[ "${1:-}" == "devbox" ]]; then
-        bash
+        bash -l
         return 0
     fi
-
-    installVendorFolderToHost
 
     waitUntilTerminalSizeIsAvailable 3s
 

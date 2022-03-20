@@ -17,5 +17,7 @@ COPY /docker/entrypoint.sh /
 COPY /app/snow.php /app/snow.php
 COPY /app/src/ /app/src/
 
+RUN echo "export PS1='devbox# '" >> /etc/profile
+
 ENTRYPOINT [ "bash", "/entrypoint.sh"  ]
 

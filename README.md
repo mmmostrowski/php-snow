@@ -14,10 +14,7 @@ docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow
 
 #### Run custom scene
 ```shell
-docker pull mmmostrowski/php-snow \
-  && docker run -it --rm mmmostrowski/php-snow \
-     https://raw.githubusercontent.com/mmmostrowski/php-snow/main/app/assets/scene-example.txt \
-     massiveSnow
+docker run -it --rm mmmostrowski/php-snow https://raw.githubusercontent.com/mmmostrowski/php-snow/main/app/assets/scene-example.txt massiveSnow
 ```
 
 ### Send a Postcard to your friend!
@@ -59,21 +56,24 @@ docker run -it --rm mmmostrowski/php-snow snowy
 ```
 
 
-### Develop locally
+### Run and Develop locally
 
 * On _Linux_ and _MacOs_:
   ```shell
-  ./run [devbox]
+  ./run
   ``` 
 * On _Windows_:
   ```shell
   run
   ```
+* In a PHP terminal:
+  ```shell
+  run devbox
+  devbox# php snow.php
+  ```
 * When no _Docker Engine_ available:
   ```shell
-  php app/snow.php
+  cd app/
+  composer install
+  php snow.php
   ```
-
-
-_`devbox` is a PHP terminal you can use for example for `composer` operations._        
-

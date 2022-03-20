@@ -2,14 +2,14 @@
 
 namespace TechBit\Snow\App;
 
-use Psr\Container\ContainerInterface;
+use DI\Container;
 use TechBit\Snow\Console\InvalidConsoleSizeException;
 use Throwable;
 
 class Bootstrap
 {
 
-    public static function createApp(ContainerInterface $container): App
+    public static function createApp(Container $container): App
     {
         return new App($container);
     }

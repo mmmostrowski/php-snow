@@ -2,7 +2,7 @@
 
 namespace TechBit\Snow\App;
 
-use Psr\Container\ContainerInterface;
+use DI\Container;
 use TechBit\Snow\Animation\Animation;
 use TechBit\Snow\Animation\Scene\UserSceneProvider;
 use TechBit\Snow\Animation\Wind\IWind;
@@ -18,7 +18,7 @@ use Psr\Container\ContainerExceptionInterface;
 class App
 {
 
-    public function __construct(readonly ContainerInterface $container)
+    public function __construct(readonly Container $container)
     {
     }
 
