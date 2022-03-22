@@ -3,6 +3,8 @@
 namespace TechBit\Snow\Console;
 
 
-class InvalidConsoleSizeException extends \Exception
+use Exception;
+
+class InvalidConsoleSizeException extends Exception
 {
 }

@@ -3,7 +3,7 @@
 namespace TechBit\Snow\Console;
 
 
-class CustomConsole extends Console
+class CustomSizeConsole extends Console
 {
 
     private float $overriddenMaxX = 0.0;

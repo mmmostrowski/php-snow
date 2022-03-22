@@ -12,12 +12,18 @@ use TechBit\Snow\Console\ConsoleColor;
 class CustomScene implements IAnimationVisibleObject
 {
 
+    protected readonly string $sceneTxt;
+
     public function __construct(
         protected readonly Config $config,
         protected readonly SnowBasis $basis,
-        protected readonly Console $console,
-        protected readonly UserSceneProvider $userCustomScene)
+        protected readonly Console $console)
     {
+    }
+
+    public function setupScene(string $sceneTxt): void
+    {
+        $this->sceneTxt = $sceneTxt;
     }
 
     public function initialize(): void
@@ -33,7 +39,7 @@ class CustomScene implements IAnimationVisibleObject
         $this->basis->drawGround();
 
         $this->basis->drawCharsInCenter(
-            $this->userCustomScene->contentText(),
+            $this->sceneTxt,
             0, 0,
             ConsoleColor::LIGHT_BLUE
         );

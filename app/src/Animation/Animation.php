@@ -8,6 +8,7 @@ use TechBit\Snow\Animation\Object\Collector;
 use TechBit\Snow\Animation\Renderer\Renderer;
 use TechBit\Snow\Config\Config;
 use TechBit\Snow\Console\Console;
+use TechBit\Snow\Console\InvalidConsoleSizeException;
 
 
 class Animation
@@ -25,9 +26,12 @@ class Animation
 
     /**
      * @throws ContainerExceptionInterface
+     * @throws InvalidConsoleSizeException
      */
     public function initialize(): void
     {
+        $this->ensureConsoleValidSize();
+
         $this->collector->collect($this->animationObjects);
         foreach ($this->collector->allObjects() as $object) {
             $object->initialize();
@@ -65,4 +69,20 @@ class Animation
         }
     }
 
+    /**
+     * @throws InvalidConsoleSizeException
+     */
+    protected function ensureConsoleValidSize(): void
+    {
+        $width = $this->console->width();
+        $height = $this->console->height();
+
+        $minWidth = $this->config->minRequiredConsoleWidth();
+        $minHeight = $this->config->minRequiredConsoleHeight();
+
+        if ($width < $minWidth || $height < $minHeight) {
+            throw new InvalidConsoleSizeException("Console size must be at least ${minWidth}x${minHeight}!\n" .
+                "Current console size is {$width}x{$height}.\n\nPlease make your terminal window larger!");
+        }
+    }
 }

@@ -41,7 +41,7 @@ class SnowAnimator implements IAnimationVisibleObject
                 continue;
             }
 
-            $this->renderer->removeParticle($idx);
+            $this->renderer->eraseParticle($idx);
 
             $this->moveParticle($idx);
 

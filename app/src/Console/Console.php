@@ -5,6 +5,7 @@ namespace TechBit\Snow\Console;
 
 class Console
 {
+
     protected float $cols = 0.0;
 
     protected float $rows = 0.0;

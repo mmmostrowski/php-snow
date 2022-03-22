@@ -3,9 +3,7 @@
 namespace TechBit\Snow\Animation;
 
 use TechBit\Snow\Animation\Frame\FrameStabilizer;
-use TechBit\Snow\Animation\Scene\CustomScene;
 use TechBit\Snow\Animation\Scene\Scene;
-use TechBit\Snow\Animation\Scene\UserSceneProvider;
 use TechBit\Snow\Animation\Snow\SnowAnimator;
 use TechBit\Snow\Animation\Snow\SnowBasis;
 use TechBit\Snow\Animation\Snow\SnowGenerator;
@@ -20,18 +18,11 @@ use TechBit\Snow\Animation\Wind\WindComposition;
 class AnimationObjectsList
 {
 
-    public function __construct(
-        protected readonly UserSceneProvider $userCustomScene)
-    {
-    }
-
     public function allElements(): array
     {
         return [
             FrameStabilizer::class,
-            $this->userCustomScene->isAvailable()
-                ? CustomScene::class
-                : Scene::class,
+            Scene::class,
             WindComposition::class,
             FieldWind::class,
             StaticWind::class,

@@ -2,16 +2,16 @@
 
 namespace TechBit\Snow\App;
 
-use DI\Container;
+use TechBit\Snow\App;
 use TechBit\Snow\Console\InvalidConsoleSizeException;
 use Throwable;
 
 class Bootstrap
 {
 
-    public static function createApp(Container $container): App
+    public static function createApp(IAppContainer $appContainer): App
     {
-        return new App($container);
+        return new App($appContainer);
     }
 
     public static function run(App $app, bool $isDevelopMode = false, array $argv = []): int
@@ -22,8 +22,8 @@ class Bootstrap
 
             srand(time());
 
-            $app->configure($argv);
-            $app->playAnimation();
+            $animation = $app->createAnimation(new CliArguments($argv));
+            $app->playAnimation($animation);
 
             return 0;
         } catch (InvalidConsoleSizeException $e) {

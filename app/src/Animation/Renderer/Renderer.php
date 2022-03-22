@@ -16,7 +16,7 @@ class Renderer
     {
     }
 
-    public function removeParticle(int $idx): void
+    public function eraseParticle(int $idx): void
     {
         $this->console->printAt(
             (int)$this->set->x($idx),

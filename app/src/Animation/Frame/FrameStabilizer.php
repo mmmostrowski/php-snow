@@ -29,7 +29,7 @@ class FrameStabilizer implements IAnimationObject
     {
         $this->targetFps = $this->config->fps();
         $this->intervalMs = (int)(1000 / $this->targetFps);
-        $this->lastSecond = (int)microtime(true);;
+        $this->lastSecond = (int)microtime(true);
     }
 
     public function fps(): int
