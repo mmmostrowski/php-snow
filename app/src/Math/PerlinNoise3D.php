@@ -5,11 +5,11 @@ namespace TechBit\Snow\Math;
 use lib\Perlin;
 
 
-class PerlinNoise3D
+final class PerlinNoise3D
 {
 
     public function __construct(
-        protected readonly Perlin $perlin)
+        private readonly Perlin $perlin = new Perlin())
     {
     }
 

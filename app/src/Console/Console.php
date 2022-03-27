@@ -3,14 +3,14 @@
 namespace TechBit\Snow\Console;
 
 
-class Console
+final class Console implements IConsole
 {
 
-    protected float $cols = 0.0;
+    private float $cols = 0.0;
 
-    protected float $rows = 0.0;
+    private float $rows = 0.0;
 
-    protected int $refreshingCounter = 0;
+    private int $refreshingCounter = 0;
 
 
     public function __construct()
@@ -21,44 +21,26 @@ class Console
         });
     }
 
-    public function minX(): float
+    /**
+     * @throws InvalidConsoleSizeException
+     */
+    public function ensureConsoleValidSize(int $minWidth, int $minHeight): void
     {
-        return 0;
-    }
+        $width = $this->width();
+        $height = $this->height();
 
-    public function maxX(): float
-    {
-        return $this->cols;
-    }
-
-    public function minY(): float
-    {
-        return 0;
-    }
-
-    public function maxY(): float
-    {
-        return $this->rows;
-    }
-
-    public function printAt(float $x, float $y, string $txt): void
-    {
-        $this->refreshConsoleSize();
-
-        if ($x < $this->minX() || $x > $this->maxX()
-            || $y < $this->minY() || $y > $this->maxY()) {
-            return;
+        if ($width < $minWidth || $height < $minHeight) {
+            throw new InvalidConsoleSizeException("Console size must be at least ${minWidth}x${minHeight}!\n" .
+                "Current console size is {$width}x{$height}.\n\nPlease make your terminal window larger!");
         }
+    }
 
-        $x=(int)$x;
-        $y=(int)$y;
-
-        # move cursor
-        echo "\033[?25l";
-        echo "\033[{$y};{$x}H";
-
-        # print
-        echo $txt;
+    private function refreshConsoleSize(): void
+    {
+        if (0 == $this->refreshingCounter++ % 500) {
+            $this->cols = (float)exec('tput cols');
+            $this->rows = (float)exec('tput lines');
+        }
     }
 
     public function switchToColor(ConsoleColor $color): void
@@ -76,21 +58,39 @@ class Console
         return $this->maxX() - $this->minX();
     }
 
+    public function maxX(): float
+    {
+        return $this->cols;
+    }
+
+    public function minX(): float
+    {
+        return 0;
+    }
+
     public function height(): float
     {
         return $this->maxY() - $this->minY();
     }
 
+    public function maxY(): float
+    {
+        return $this->rows;
+    }
+
+    public function minY(): float
+    {
+        return 0;
+    }
+
     public function isIn(float $x, float $y): bool
     {
-        return $x >= $this->minX() && $x <= $this->maxX()
-            && $y >= $this->minY() && $y <= $this->maxY();
+        return $x >= $this->minX() && $x <= $this->maxX() && $y >= $this->minY() && $y <= $this->maxY();
     }
 
     public function notIn(float $x, float $y): bool
     {
-        return $x < $this->minX() || $x > $this->maxX()
-            || $y < $this->minY() || $y > $this->maxY();
+        return !$this->isIn($x, $y);
     }
 
     public function centerX(): float
@@ -112,12 +112,23 @@ class Console
         }
     }
 
-    protected function refreshConsoleSize(): void
+    public function printAt(float $x, float $y, string $txt): void
     {
-        if (0 == $this->refreshingCounter++ % 500) {
-            $this->cols = (float)exec('tput cols');
-            $this->rows = (float)exec('tput lines');
+        $this->refreshConsoleSize();
+
+        if ($x < $this->minX() || $x > $this->maxX() || $y < $this->minY() || $y > $this->maxY()) {
+            return;
         }
+
+        $x = (int)$x;
+        $y = (int)$y;
+
+        # move cursor
+        echo "\033[?25l";
+        echo "\033[{$y};{$x}H";
+
+        # print
+        echo $txt;
     }
 
 }

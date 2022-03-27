@@ -3,39 +3,41 @@
 namespace TechBit\Snow\App;
 
 use TechBit\Snow\App;
-use TechBit\Snow\Console\InvalidConsoleSizeException;
+use TechBit\Snow\App\Exception\AppUserException;
 use Throwable;
 
-class Bootstrap
+final class Bootstrap
 {
 
-    public static function createApp(IAppContainer $appContainer): App
+    public static function createApp(): IApp
     {
-        return new App($appContainer);
+        return new App();
     }
 
-    public static function run(App $app, bool $isDevelopMode = false, array $argv = []): int
+    public static function createArguments(array $argv, bool $isDeveloperMode): AppArguments
+    {
+        return (new AppArgumentsFactory())->create($argv, $isDeveloperMode);
+    }
+
+    public static function run(IApp $app, AppArguments $appArguments): int
     {
         try {
-            error_reporting($isDevelopMode ? E_ALL : E_ERROR | E_PARSE);
-            ini_set('display_errors', $isDevelopMode ? 'On' : 'Off');
+            error_reporting($appArguments->isDeveloperMode() ? E_ALL : E_ERROR | E_PARSE);
+            ini_set('display_errors', $appArguments->isDeveloperMode() ? 'On' : 'Off');
 
             srand(time());
 
-            $animation = $app->createAnimation(new CliArguments($argv));
-            $app->playAnimation($animation);
+            $app->run($appArguments);
 
             return 0;
-        } catch (InvalidConsoleSizeException $e) {
+        } catch (AppUserException $e) {
             echo PHP_EOL;
-            echo $e->getMessage() . PHP_EOL;
+            echo $e->getMessage();
             echo PHP_EOL;
-
             return 1;
         } catch (Throwable $e) {
-            echo $e;
+            echo $appArguments->isDeveloperMode() ? $e : 'Unknown error';
             echo PHP_EOL;
-
             return 1;
         }
     }

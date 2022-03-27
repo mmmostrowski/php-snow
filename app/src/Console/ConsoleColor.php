@@ -13,8 +13,7 @@ enum ConsoleColor
 
     public function terminalCode(): string
     {
-        return match($this)
-        {
+        return match ($this) {
             self::DEFAULT => "\e[0m",
             self::BLUE => "\e[34m",
             self::LIGHT_BLUE => "\e[94m",

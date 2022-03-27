@@ -2,9 +2,8 @@
 
 namespace TechBit\Snow\Console;
 
+use TechBit\Snow\App\Exception\AppUserException;
 
-use Exception;
-
-class InvalidConsoleSizeException extends Exception
+class InvalidConsoleSizeException extends AppUserException
 {
 }

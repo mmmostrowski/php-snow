@@ -2,40 +2,28 @@
 
 namespace TechBit\Snow;
 
-use Psr\Container\ContainerExceptionInterface;
-use TechBit\Snow\Animation\Animation;
-use TechBit\Snow\Animation\Wind\WindComposition;
-use TechBit\Snow\App\IAppArguments;
-use TechBit\Snow\App\IAppContainer;
-use TechBit\Snow\Console\InvalidConsoleSizeException;
+use TechBit\Snow\SnowFallAnimation\AnimationFactory;
+use TechBit\Snow\App\AppArguments;
+use TechBit\Snow\App\Exception\AppException;
+use TechBit\Snow\App\IAnimationFactory;
+use TechBit\Snow\App\IApp;
 
 
-class App
+final class App implements IApp
 {
 
-    public function __construct(readonly IAppContainer $appContainer)
+    public function __construct(
+        private readonly IAnimationFactory $factory = new AnimationFactory())
     {
     }
 
     /**
-     * @throws ContainerExceptionInterface
+     * @throws AppException
      */
-    public function createAnimation(IAppArguments $arguments): Animation
+    public function run(AppArguments $arguments): void
     {
-        return $this->appContainer->createAnimation(
-            windClass: WindComposition::class,
-            presetName: $arguments->presetName(),
-            customScene: $arguments->customScene(),
-            consoleSize: $arguments->consoleSize(),
-        );
-    }
+        $animation = $this->factory->create($arguments);
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws InvalidConsoleSizeException
-     */
-    public function playAnimation(Animation $animation): void
-    {
         $animation->initialize();
 
         $animation->play();

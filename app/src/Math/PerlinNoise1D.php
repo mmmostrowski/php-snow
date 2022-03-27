@@ -5,22 +5,22 @@ namespace TechBit\Snow\Math;
 use lib\Perlin;
 
 
-class PerlinNoise1D
+final class PerlinNoise1D
 {
 
     public function __construct(
-        protected readonly Perlin $perlin)
+        private readonly Perlin $perlin = new Perlin())
     {
-    }
-
-    public function generate(float $x): float
-    {
-        return (float)$this->perlin->random1D($x);
     }
 
     public function generateInRange(float $x, float $from, float $to): float
     {
         return $from + ($this->generate($x) / 2 + 0.5) * ($to - $from);
+    }
+
+    public function generate(float $x): float
+    {
+        return (float)$this->perlin->random1D($x);
     }
 
 }

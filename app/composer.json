@@ -7,8 +7,7 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "php-di/php-di": "6.3.5"
+        "php": "^8.1"
     },
     "autoload": {
         "psr-4": {
