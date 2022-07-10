@@ -24,6 +24,7 @@ final class FramePainter implements IFramePainter, IAnimationObject
 
     public function eraseParticle(int $idx): void
     {
+        $this->console->switchToColor(ConsoleColor::BLACK);
         $this->console->printAt(
             (int)$this->particles->x($idx),
             (int)$this->particles->y($idx),
@@ -33,6 +34,7 @@ final class FramePainter implements IFramePainter, IAnimationObject
 
     public function renderParticle(int $idx): void
     {
+        $this->console->switchToColor(ConsoleColor::WHITE);
         $this->console->printAt(
             $this->particles->x($idx),
             $this->particles->y($idx),
@@ -49,11 +51,11 @@ final class FramePainter implements IFramePainter, IAnimationObject
     {
         $this->console->switchToColor($color);
         $this->console->printAt($x, $y, $char);
-        $this->console->resetColor();
     }
 
     public function clearWindow(): void
     {
+        $this->console->switchToColor(ConsoleColor::BLACK);
         $this->console->clear();
     }
 }

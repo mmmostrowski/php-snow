@@ -5,19 +5,22 @@ namespace TechBit\Snow\Console;
 
 enum ConsoleColor
 {
-    case DEFAULT;
+    case RESET;
 
+    case BLACK;
+    case WHITE;
     case BLUE;
     case LIGHT_BLUE;
-    case GREEN;
 
     public function terminalCode(): string
     {
         return match ($this) {
-            self::DEFAULT => "\e[0m",
-            self::BLUE => "\e[34m",
-            self::LIGHT_BLUE => "\e[94m",
-            self::GREEN => "\e[32m",
+            self::RESET => "\e[0m",
+
+            self::BLACK => "\e[48;5;232m",
+            self::WHITE => "\e[38;5;195m",
+            self::BLUE => "\e[38;5;25m",
+            self::LIGHT_BLUE => "\e[38;5;39m",
         };
     }
 }

@@ -50,7 +50,7 @@ final class Console implements IConsole
 
     public function resetColor(): void
     {
-        echo ConsoleColor::DEFAULT->terminalCode();
+        echo ConsoleColor::RESET->terminalCode();
     }
 
     public function width(): float
