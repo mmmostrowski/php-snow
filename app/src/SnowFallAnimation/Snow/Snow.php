@@ -88,10 +88,10 @@ final class Snow implements IAnimationVisibleObject, IAnimationConfigurableObjec
 
     private function randomAtTop(string $shape): array
     {
-        $halfWidth = (int)($this->console->width() / 2);
+        $extendBy = (int)($this->console->width() * 1.3);
 
         return $this->particles->makeNew(
-            rand((int)$this->console->minX() - $halfWidth, (int)$this->console->maxX() + $halfWidth),
+            rand((int)$this->console->minX() - $extendBy, (int)$this->console->maxX() + $extendBy),
             $this->console->minY(),
             $shape,
         );
@@ -99,9 +99,12 @@ final class Snow implements IAnimationVisibleObject, IAnimationConfigurableObjec
 
     private function randomInCenterArea(string $shape): array
     {
+        $extendByX = (int)($this->console->width() * 1.3);
+        $extendByY = (int)($this->console->height() * 1.3);
+
         return $this->particles->makeNew(
-            rand((int)$this->console->minX(), (int)$this->console->maxX()),
-            rand((int)$this->console->minY(), (int)$this->console->maxY()),
+            rand((int)$this->console->minX() - $extendByX, (int)$this->console->maxX() + $extendByX),
+            rand((int)$this->console->minY() - $extendByY, (int)$this->console->maxY() + $extendByY),
             $shape,
         );
     }

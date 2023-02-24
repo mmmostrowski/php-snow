@@ -13,10 +13,10 @@ final class TestWindPreset extends DefaultConfig
 //        return 100000;
 //    }
 
-    public function snowProbabilityOfProducingFromTop(): int
-    {
-        return 0;
-    }
+    // public function snowProbabilityOfProducingFromTop(): int
+    // {
+    //     return 0;
+    // }
 //
 //    public function gravity()
 //    {
@@ -57,7 +57,7 @@ final class TestWindPreset extends DefaultConfig
 
     public function snowProducingTempo(): int
     {
-        return parent::snowProducingTempo() * 20;
+        return parent::snowProducingTempo() * 26;
     }
 
     public function snowMaxNumOfFlakesAtOnce(): int

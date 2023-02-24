@@ -25,6 +25,8 @@ final class SnowFall implements IAnimationVisibleObject, IAnimationConfigurableO
 
     private float $gravityConstant;
 
+    private array $particlesOutOfVisibleAreaTracker = [];
+
 
     public function initialize(AnimationContext $context): void
     {
@@ -58,8 +60,16 @@ final class SnowFall implements IAnimationVisibleObject, IAnimationConfigurableO
             $this->moveParticle($idx);
 
             if ($this->console->notIn($data[SnowParticles::X], $data[SnowParticles::Y])) {
-                $this->particles->remove($idx);
-                continue;
+                if (!isset($this->particlesOutOfVisibleAreaTracker[$idx])) {
+                    $this->particlesOutOfVisibleAreaTracker[$idx] = 0;
+                }
+                if (++$this->particlesOutOfVisibleAreaTracker[$idx] > 35) {
+                    $this->particles->remove($idx);
+                    unset($this->particlesOutOfVisibleAreaTracker[$idx]);
+                    continue;
+                }
+            } else {
+                $this->particlesOutOfVisibleAreaTracker[$idx] = 0;
             }
 
             if ($this->basis->isHitAt($data[SnowParticles::X], $data[SnowParticles::Y])) {

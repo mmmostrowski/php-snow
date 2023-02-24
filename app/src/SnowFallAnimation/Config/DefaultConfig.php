@@ -78,7 +78,7 @@ class DefaultConfig implements Config
 
     public function snowMaxNumOfFlakesAtOnce(): int
     {
-        return 2000;
+        return 4000;
     }
 
     public function snowProbabilityOfProducingFromTop(): int
