@@ -16,6 +16,10 @@ final class SnowParticles
 
     private readonly array $nullParticle;
 
+    public static function perParticleFactor(int $idx, float $minFactor): float 
+    {
+        return $minFactor + (1.0 - $minFactor) * ( ( $idx % 101 ) ) / 100.0;
+    }   
 
     public function __construct()
     {

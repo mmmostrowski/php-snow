@@ -2,18 +2,19 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Config\Preset;
 
-use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\DefaultConfig;
 
 
-final class NoSnowPreset extends Config
+final class NoSnowPreset extends DefaultConfig
 {
 
-    public function hasWind(): bool
+    public function snowMaxNumOfFlakesAtOnce(): int
     {
-        return false;
+        return 0;
     }
 
-    public function snowMaxNumOfFlakesAtOnce(): int
+
+    public function snowProducingTempo(): int
     {
         return 0;
     }

@@ -2,10 +2,10 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Config\Preset;
 
-use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\DefaultConfig;
 
 
-final class ClassicalPreset extends Config
+final class ClassicalPreset extends DefaultConfig
 {
 
 }

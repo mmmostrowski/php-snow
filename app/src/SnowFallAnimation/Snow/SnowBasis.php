@@ -8,9 +8,11 @@ use TechBit\Snow\SnowFallAnimation\AnimationContext;
 use TechBit\Snow\SnowFallAnimation\Frame\FramePainter;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationAliveObject;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationVisibleObject;
+use TechBit\Snow\SnowFallAnimation\Object\IAnimationConfigurableObject;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 
 
-final class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
+final class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject, IAnimationConfigurableObject
 {
     const SHAPE = 0;
     const COUNTER = 1;
@@ -19,11 +21,11 @@ final class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
 
     private readonly FramePainter $renderer;
 
-    private readonly int $pressingSpeedMin;
+    private int $pressingSpeedMin;
 
-    private readonly int $pressingSpeedMax;
+    private int $pressingSpeedMax;
 
-    private readonly int $howManyParticlesNeedsToFallToBecomeGround;
+    private int $howManyParticlesNeedsToFallToBecomeGround;
 
     private readonly string $pressedSnowSymbol;
 
@@ -40,11 +42,14 @@ final class SnowBasis implements IAnimationAliveObject, IAnimationVisibleObject
         $this->renderer = $context->painter();
 
         $this->pressedSnowSymbol = $context->snowFlakeShape()->pressedSnowSymbol();
-        $this->howManyParticlesNeedsToFallToBecomeGround = $context->config()->snowHowManyFlakesNeedsToFallToFormAHill();
-        $this->pressingSpeedMin = $context->config()->snowIsPressedAfterFramesNumMin();
-        $this->pressingSpeedMax = $context->config()->snowIsPressedAfterFramesNumMax();
         $this->frameCounter = 0;
     }
+
+	public function onConfigChange(Config $config): void {
+        $this->howManyParticlesNeedsToFallToBecomeGround = $config->snowHowManyFlakesNeedsToFallToFormAHill();
+        $this->pressingSpeedMin = $config->snowIsPressedAfterFramesNumMin();
+        $this->pressingSpeedMax = $config->snowIsPressedAfterFramesNumMax();
+	}
 
     public function update(): void
     {

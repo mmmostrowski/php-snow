@@ -5,6 +5,7 @@ namespace TechBit\Snow\SnowFallAnimation\Wind\Type;
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowParticles;
 use TechBit\Snow\SnowFallAnimation\Wind\IWind;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 use TechBit\Snow\Math\PerlinNoise1D;
 
 
@@ -13,11 +14,11 @@ final class StaticWind implements IWind
 
     private readonly SnowParticles $particles;
 
-    private readonly float $strengthMax;
+    private float $strengthMax;
 
-    private readonly float $strengthMin;
+    private float $strengthMin;
 
-    private readonly float $windVariation;
+    private float $windVariation;
 
     private float $time = 0.0;
 
@@ -35,11 +36,15 @@ final class StaticWind implements IWind
     public function initialize(AnimationContext $context): void
     {
         $this->particles = $context->snowParticles();
-        $this->strengthMin = $context->config()->windGlobalStrengthMin();
-        $this->strengthMax = $context->config()->windGlobalStrengthMax();
-        $this->windVariation = $context->config()->windGlobalVariation();
         $this->generateNewWindDirection();
     }
+
+	public function onConfigChange(Config $config): void 
+    {
+        $this->strengthMin = $config->windGlobalStrengthMin();
+        $this->strengthMax = $config->windGlobalStrengthMax();
+        $this->windVariation = $config->windGlobalVariation();
+	}
 
     private function generateNewWindDirection(): void
     {
@@ -65,7 +70,9 @@ final class StaticWind implements IWind
 
     public function moveParticle(int $idx): void
     {
-        $this->particles->moveBy($idx, $this->directionX, $this->directionY);
+        $factor = SnowParticles::perParticleFactor($idx, 0.3);
+
+        $this->particles->moveBy($idx, $this->directionX * $factor, $this->directionY * $factor);
     }
 
 }

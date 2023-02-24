@@ -2,10 +2,10 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Config\Preset;
 
-use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\DefaultConfig;
 
 
-final class CalmPreset extends Config
+final class CalmPreset extends DefaultConfig
 {
 
     public function snowProducingTempo(): int

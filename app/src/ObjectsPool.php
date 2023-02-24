@@ -43,10 +43,12 @@ final class ObjectsPool
             TestWindPreset::class,
         ],
         private readonly array $defaultConfigPresets = [
-            ClassicalPreset::class => 90,
-            WindyPreset::class => 20,
-            SnowyPreset::class => 20,
-            MassiveSnowPreset::class => 10,
+            ClassicalPreset::class => 40,
+            CalmPreset::class => 30,
+            WindyPreset::class => 30,
+            SnowyPreset::class => 30,
+            MassiveSnowPreset::class => 20,
+            NoWindPreset::class => 10,
         ]
     )
     {

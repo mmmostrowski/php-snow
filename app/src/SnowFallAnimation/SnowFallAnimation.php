@@ -3,6 +3,7 @@
 namespace TechBit\Snow\SnowFallAnimation;
 
 use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\StartupConfig;
 use TechBit\Snow\SnowFallAnimation\Frame\IFramePainter;
 use TechBit\Snow\SnowFallAnimation\Object\AnimationObjects;
 use TechBit\Snow\App\IAnimation;
@@ -15,27 +16,33 @@ final class SnowFallAnimation implements IAnimation
 
     private IConsole $console;
     private IFramePainter $painter;
-    private Config $config;
 
     public function __construct(
         private readonly AnimationContext $context,
         private readonly AnimationObjects $objects,
+        private readonly Config $config,
+        private readonly StartupConfig $startupConfig,
     )
     {
         $this->console = $this->context->console();
         $this->painter = $this->context->painter();
-        $this->config = $this->context->config();
     }
-
+    
     /**
      * @throws InvalidConsoleSizeException
      */
     public function initialize(): void
     {
+        srand();
+
         $this->console->ensureConsoleValidSize(
-            $this->config->minRequiredConsoleWidth(),
-            $this->config->minRequiredConsoleHeight(),
+            $this->startupConfig->minRequiredConsoleWidth(),
+            $this->startupConfig->minRequiredConsoleHeight(),
         );
+
+        foreach ($this->objects->allConfigurableObjects() as $object) {
+            $object->onConfigChange($this->config);
+        }        
 
         foreach ($this->objects->allObjects() as $object) {
             $object->initialize($this->context);
@@ -48,6 +55,7 @@ final class SnowFallAnimation implements IAnimation
 
         $visibleObjects = $this->objects->allVisibleObjects();
         $aliveObjects = $this->objects->allAliveObjects();
+        $configurableObjects = $this->objects->allConfigurableObjects();
 
         foreach ($visibleObjects as $object) {
             $object->renderFirstFrame();
@@ -55,6 +63,10 @@ final class SnowFallAnimation implements IAnimation
 
         $maxFrames = $this->context->config()->animationLengthInFrames();
         while (--$maxFrames) {
+            foreach ($configurableObjects as $object) {
+                $object->onConfigChange($this->config);
+            }        
+
             foreach ($aliveObjects as $object) {
                 $object->update();
             }
@@ -63,6 +75,11 @@ final class SnowFallAnimation implements IAnimation
                 $object->renderLoopFrame();
             }
         }
+
+        echo "\n";
+        echo "                            \n";
+        echo "  Thank you for watching!   \n";
+        echo "                            \n";
     }
 
 }

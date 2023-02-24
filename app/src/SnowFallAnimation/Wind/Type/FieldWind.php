@@ -5,6 +5,7 @@ namespace TechBit\Snow\SnowFallAnimation\Wind\Type;
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowParticles;
 use TechBit\Snow\SnowFallAnimation\Wind\IWind;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 use TechBit\Snow\Console\IConsole;
 use TechBit\Snow\Math\PerlinNoise3D;
 
@@ -16,15 +17,15 @@ final class FieldWind implements IWind
 
     private readonly IConsole $console;
 
-    private readonly int $gridSize;
+    private int $gridSize = -1;
 
-    private readonly float $strengthMin;
+    private float $strengthMin;
 
-    private readonly float $strengthMax;
+    private float $strengthMax;
 
-    private readonly int $updateGridEveryNthFrame;
+    private int $updateGridEveryNthFrame;
 
-    private readonly float $fieldWindVariation;
+    private float $fieldWindVariation;
 
     private int $updateGridFrameCounter = 0;
 
@@ -46,17 +47,33 @@ final class FieldWind implements IWind
         $this->particles = $context->snowParticles();
         $this->console = $context->console();
 
-        $this->gridSize = $context->config()->windFieldGridSize();
-        $this->vectorPowerNoise->initialize(3);
         $this->vectorDirectionNoise->initialize(20);
+        $this->vectorPowerNoise->initialize(3);
 
-        $this->updateGridEveryNthFrame = $context->config()->windFieldGridUpdateEveryNthFrame();
-        $this->updateGridFrameCounter = $this->updateGridEveryNthFrame;
-        $this->fieldWindVariation = $context->config()->windFieldVariation();
-        $this->strengthMin = $context->config()->windFieldStrengthMin() * 0.005;
-        $this->strengthMax = $context->config()->windFieldStrengthMax() * 0.005;
+        $this->updateGridFrameCounter = $this->updateGridEveryNthFrame;        
+    }
 
-        $this->updateGrid();
+	public function onConfigChange(Config $config): void 
+    {
+        $this->updateGridEveryNthFrame = $config->windFieldGridUpdateEveryNthFrame();
+        $this->fieldWindVariation = $config->windFieldVariation();
+        $this->strengthMin = $config->windFieldStrengthMin() * 0.005;
+        $this->strengthMax = $config->windFieldStrengthMax() * 0.005;
+
+        $previousGridSize = $this->gridSize;
+        $this->gridSize = $config->windFieldGridSize();
+        if ($this->gridSize != $previousGridSize) {
+            $this->updateGrid();
+        }
+	}
+
+    public function update(): void
+    {
+        $this->time += 0.01 * $this->fieldWindVariation;
+        if (--$this->updateGridFrameCounter <= 0) {
+            $this->updateGridFrameCounter = $this->updateGridEveryNthFrame;
+            $this->updateGrid();
+        }
     }
 
     private function updateGrid(): void
@@ -81,15 +98,6 @@ final class FieldWind implements IWind
         }
     }
 
-    public function update(): void
-    {
-        $this->time += 0.01 * $this->fieldWindVariation;
-        if (!--$this->updateGridFrameCounter) {
-            $this->updateGridFrameCounter = $this->updateGridEveryNthFrame;
-            $this->updateGrid();
-        }
-    }
-
     public function moveParticle(int $idx): void
     {
         $particleX = (int)(($this->gridSize) * ($this->particles->x($idx) - $this->console->minX()) / $this->console->width());
@@ -102,7 +110,12 @@ final class FieldWind implements IWind
             return;
         }
 
-        $this->particles->updateMomentumArr($idx, $this->grid[$particleX][$particleY]);
+        $forceVector = $this->grid[$particleX][$particleY];
+        $perParticleFactor = SnowParticles::perParticleFactor($idx, 0.5);
+        $this->particles->updateMomentum($idx, 
+            $forceVector[0] * $perParticleFactor,
+            $forceVector[1] * $perParticleFactor,
+        );
     }
 }
 

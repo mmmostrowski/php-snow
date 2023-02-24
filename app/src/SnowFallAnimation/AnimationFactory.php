@@ -2,8 +2,15 @@
 
 namespace TechBit\Snow\SnowFallAnimation;
 
+use TechBit\Snow\Math\Interpolation\Interpolation;
+use TechBit\Snow\Math\Interpolation\LinearInterpolation;
+use TechBit\Snow\SnowFallAnimation\Config\ConfigFactory;
+use TechBit\Snow\SnowFallAnimation\Config\IConfigFactory;
 use TechBit\Snow\SnowFallAnimation\Config\IPresetFactory;
 use TechBit\Snow\SnowFallAnimation\Config\PresetFactory;
+use TechBit\Snow\SnowFallAnimation\Config\PresetSlider\ConfigPresetSliderFactory;
+use TechBit\Snow\SnowFallAnimation\Config\PresetSlider\IConfigPresetSliderFactory;
+use TechBit\Snow\SnowFallAnimation\Config\StartupConfig;
 use TechBit\Snow\SnowFallAnimation\Frame\FramePainter;
 use TechBit\Snow\SnowFallAnimation\Frame\FrameStabilizer;
 use TechBit\Snow\SnowFallAnimation\Frame\IFramePainter;
@@ -37,29 +44,42 @@ final class AnimationFactory implements IAnimationFactory
 
     private readonly IWindFactory $windFactory;
 
-    private readonly IPresetFactory $presetFactory;
+    private readonly IConfigFactory $configFactory;
 
 
     public function __construct(
+        string           $defaultPreset = 'slideshow:random',
         private          readonly ISnowFlakeShape $flakeShapes = new SnowFlakeShape(),
         private          readonly ISceneFactory $sceneFactory = new SceneFactory(),
         private          readonly IFramePainter $renderer = new FramePainter(),
-        private          readonly IAnimationObject $snowBasis = new SnowBasis(),
+        private          readonly SnowBasis $snowBasis = new SnowBasis(),
         private          readonly IConsole $console = new Console(),
-        IAnimationObject $frameStabilizer = new FrameStabilizer(),
-        ObjectsPool      $objectsPool = new ObjectsPool(),
-        IAnimationObject $snowFall = new SnowFall(),
-        IAnimationObject $snow = new Snow(),
-        ?IPresetFactory  $presetFactory = null,
-        ?IWindFactory    $windFactory = null,
+        private          readonly IPresetFactory $presetFactory = new PresetFactory(),
+        private          readonly StartupConfig $startupConfig = new StartupConfig(),
+        Interpolation               $presetInterpolator = new LinearInterpolation(),
+        IAnimationObject            $frameStabilizer = new FrameStabilizer(),
+        ObjectsPool                 $objectsPool = new ObjectsPool(),
+        IAnimationObject            $snowFall = new SnowFall(),
+        IAnimationObject            $snow = new Snow(),
+        ?IConfigPresetSliderFactory $configPresetSliderFactory = null,
+        ?IConfigFactory             $configFactory = null,
+        ?IWindFactory               $windFactory = null,
     )
     {
         $this->windFactory = $windFactory ?? new WindFactory(
                 $objectsPool->allWindForces());
 
-        $this->presetFactory = $presetFactory ?? new PresetFactory(
-                $objectsPool->allConfigPresets(),
-                $objectsPool->defaultConfigPresets());
+        $configPresetSliderFactory = $configPresetSliderFactory ?? new ConfigPresetSliderFactory(
+            $this->startupConfig,
+            $presetFactory,
+            $presetInterpolator,
+        );
+
+        $this->configFactory = $configFactory ?? new ConfigFactory(
+            $configPresetSliderFactory,
+            $presetFactory,
+            $objectsPool->defaultConfigPresets(),
+            $defaultPreset);
 
         $this->animationObjects = [
             $frameStabilizer, $renderer,
@@ -69,7 +89,7 @@ final class AnimationFactory implements IAnimationFactory
 
     public function create(AppArguments $arguments): IAnimation
     {
-        $config = $this->presetFactory->create($arguments->presetName());
+        $config = $this->configFactory->create($arguments->presetName());
 
         $wind = $this->windFactory->create($config->hasWind(), $arguments->windForces());
 
@@ -81,6 +101,7 @@ final class AnimationFactory implements IAnimationFactory
                 $wind,
                 $this->flakeShapes,
                 $config,
+                $this->startupConfig,
                 $this->snowBasis,
                 new SnowParticles(),
             ),
@@ -88,7 +109,10 @@ final class AnimationFactory implements IAnimationFactory
                 $wind,
                 $scene,
                 ...$this->animationObjects,
+                $config,
             ]),
+            $config,
+            $this->startupConfig,
         );
     }
 

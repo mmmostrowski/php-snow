@@ -2,8 +2,10 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Wind\Type;
 
+use TechBit\Snow\Math\PerlinNoise1D;
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowParticles;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 use TechBit\Snow\SnowFallAnimation\Wind\IWind;
 use TechBit\Snow\Console\IConsole;
 
@@ -20,24 +22,31 @@ final class BlowWind implements IWind
     const STRENGTH = 7;
 
     private readonly SnowParticles $particles;
-
+    
     private readonly IConsole $console;
 
-    private readonly int $maxNumOfWindBlows;
+    private int $maxNumOfWindBlows;
 
-    private readonly int $frequencyOfWindBlows;
+    private int $frequencyOfWindBlows;
 
-    private readonly float $minStrength;
+    private float $minStrength;
 
-    private readonly float $maxStrength;
+    private float $maxStrength;
 
-    private readonly int $minAnimationLength;
+    private int $minAnimationLength;
 
-    private readonly int $maxAnimationLength;
+    private int $maxAnimationLength;
 
     private float $time = 0.0;
 
     private array $blowSources = [];
+
+    public function __construct(
+        private readonly PerlinNoise1D $windWaveNoise = new PerlinNoise1D(),
+        private readonly PerlinNoise1D $blowNoise = new PerlinNoise1D(),
+    ) {
+        
+    }
 
 
     public function initialize(AnimationContext $context): void
@@ -46,13 +55,17 @@ final class BlowWind implements IWind
         $this->console = $context->console();
 
         $this->time = 0.0;
-        $this->frequencyOfWindBlows = $context->config()->windBlowsFrequency();
-        $this->maxNumOfWindBlows = $context->config()->windBlowsMaxNumAtSameTime();
-        $this->minStrength = $context->config()->windBlowsMinStrength();
-        $this->maxStrength = $context->config()->windBlowsMaxStrength();
-        $this->minAnimationLength = $context->config()->windBlowsMinAnimationLength();
-        $this->maxAnimationLength = $context->config()->windBlowsMaxAnimationLength();
     }
+
+	public function onConfigChange(Config $config): void 
+    {
+        $this->frequencyOfWindBlows = $config->windBlowsFrequency();
+        $this->maxNumOfWindBlows = $config->windBlowsMaxNumAtSameTime();
+        $this->minStrength = $config->windBlowsMinStrength();
+        $this->maxStrength = $config->windBlowsMaxStrength();
+        $this->minAnimationLength = $config->windBlowsMinAnimationLength();
+        $this->maxAnimationLength = $config->windBlowsMaxAnimationLength();
+	}
 
     public function update(): void
     {
@@ -69,21 +82,23 @@ final class BlowWind implements IWind
 
     private function generateNewWindBlow(): void
     {
-        $minAfterEdge = 2;
-        $maxAfterEdge = 10;
+        $minAfterEdge = 8;
+        $maxAfterEdge = 128;
+        $aboveEdge = 20;
+        $belowEdge = 10;
         $strength = rand((int)($this->minStrength * 10000), (int)($this->maxStrength * 10000)) / 10000;
         $coreRadiusRatio = (float)(rand(70, 100) / 100);
         $animationLength = (int)(rand((int)($this->minAnimationLength * 10000), (int)($this->maxAnimationLength * 10000)) / 10000);
 
         $left = rand(1, 2) == 1;
-        $y = rand((int)$this->console->minY(), (int)$this->console->maxY());
+        $y = rand((int)$this->console->minY() - $aboveEdge, (int)$this->console->maxY() + $belowEdge) / 1.5;
         if ($left) {
             $x = rand((int)$this->console->minX() - $minAfterEdge, (int)$this->console->minX() - $maxAfterEdge);
         } else {
             $x = rand((int)$this->console->maxX() + $minAfterEdge, (int)$this->console->maxX() + $maxAfterEdge);
         }
 
-        $radius = $this->console->width() + $maxAfterEdge * 2.0 + 10.0;
+        $radius = $this->console->width() + $maxAfterEdge * 2.0 + 24.0;
         $this->addBlowSource($x, $y, $strength, $radius, $radius * $coreRadiusRatio, $animationLength);
     }
 
@@ -113,8 +128,22 @@ final class BlowWind implements IWind
 
     private function blowFromSource(int $blowId, int $particleIdx, float $x, float $y, array $blowSource): void
     {
-        $vx = (float)($x - $blowSource[self::X]);
-        $vy = (float)($y - $blowSource[self::Y]);
+        $bx = $blowSource[self::X];
+        $by = $blowSource[self::Y];
+
+        $deltaTime = ($this->time - $blowSource[self::TIME]) / $blowSource[self::ANIMATION_LENGTH];
+        if ($deltaTime > 1) {
+            $this->removeSource($blowId);
+            return;
+        }
+
+        $waveFactor = sin( $deltaTime * M_PI * $this->windWaveNoise->generateInRange($this->time / 100, 50, 350) );
+
+        $perParticleFactor = SnowParticles::perParticleFactor($particleIdx, 0.8);
+        $by += $waveFactor * 200 * $perParticleFactor;
+
+        $vx = (float)($x - $bx);
+        $vy = (float)($y - $by);
 
         $distSquare = $vx * $vx + $vy * $vy;
 
@@ -123,24 +152,20 @@ final class BlowWind implements IWind
         }
 
         $dist = sqrt($distSquare);
-        $deltaTime = ($this->time - $blowSource[self::TIME]) / $blowSource[self::ANIMATION_LENGTH];
-        if ($deltaTime > 1) {
-            $this->removeSource($blowId);
-            return;
-        }
-
         $power = $blowSource[self::RADIUS] - $dist;
+        $power *= $this->blowNoise->generateInRange($this->time, 0.5, 1.0);
         if ($power > $blowSource[self::CORE_RADIUS]) {
             $power = $blowSource[self::CORE_RADIUS];
         }
 
         $animationFactor = 0.5 + cos($deltaTime * M_PI) / 2;
         $ratio = (1.0 / $dist) * $blowSource[self::STRENGTH] * $power * $animationFactor * 0.001;
+        $perParticleFactor = SnowParticles::perParticleFactor($particleIdx, 0.1);
 
         $this->particles->updateMomentum(
             $particleIdx,
-            $vx * $ratio,
-            $vy * $ratio
+            $vx * $ratio * $perParticleFactor,
+            $vy * $ratio * $perParticleFactor,
         );
     }
 

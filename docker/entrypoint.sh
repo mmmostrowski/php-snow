@@ -4,7 +4,8 @@ set -eu
 function main() {
     installVendorFolderToHost
 
-    if [[ "${1:-}" == "devbox" ]]; then
+    if [[ "${1:-}" == "devbox" ]] || [[ "${1:-}" == 'bash' ]] || [[ "${1:-}" == 'dev' ]]; then
+        echo "To run app please execute: php snow.php [ args ... ]"
         bash -l
         return 0
     fi

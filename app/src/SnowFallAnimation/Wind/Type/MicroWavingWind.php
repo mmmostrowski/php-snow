@@ -3,18 +3,20 @@
 namespace TechBit\Snow\SnowFallAnimation\Wind\Type;
 
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Object\IAnimationConfigurableObject;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowParticles;
 use TechBit\Snow\SnowFallAnimation\Wind\IWind;
 
 
-final class MicroWavingWind implements IWind
+final class MicroWavingWind implements IWind, IAnimationConfigurableObject
 {
 
     private readonly SnowParticles $particles;
 
-    private readonly float $microMovementConstant;
+    private float $microMovementConstant;
 
-    private readonly float $microMovementFrequency;
+    private float $microMovementFrequency;
 
     private float $microMovementTime = 0.0;
 
@@ -22,9 +24,12 @@ final class MicroWavingWind implements IWind
     public function initialize(AnimationContext $context): void
     {
         $this->particles = $context->snowParticles();
-        $this->microMovementConstant = $context->config()->microMovementPower();
-        $this->microMovementFrequency = $context->config()->microMovementFrequency();
     }
+
+	public function onConfigChange(Config $config): void {
+        $this->microMovementConstant = $config->microMovementPower();
+        $this->microMovementFrequency = $config->microMovementFrequency();
+	}
 
     public function update(): void
     {
@@ -33,14 +38,14 @@ final class MicroWavingWind implements IWind
 
     public function moveParticle(int $idx): void
     {
-        if ($this->microMovementFrequency) {
-            $offset = $idx;
-            $microMovement = sin($this->microMovementTime * $this->microMovementFrequency + $offset) * $this->microMovementConstant;
-        } else {
-            $microMovement = 0;
+        if ($this->microMovementFrequency <= 0.0) {
+            return;
         }
 
-        $this->particles->moveByX($idx, $microMovement);
+        $offset = $idx;
+        $microMovement = sin($this->microMovementTime * $this->microMovementFrequency + $offset) * $this->microMovementConstant;
+
+        $this->particles->moveByX($idx, $microMovement * SnowParticles::perParticleFactor($idx, 0.1));
     }
 
 }

@@ -2,10 +2,10 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Config\Preset;
 
-use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\DefaultConfig;
 
 
-final class TestPerformancePreset extends Config
+final class TestPerformancePreset extends DefaultConfig
 {
 
     public function showFps(): bool
@@ -20,12 +20,12 @@ final class TestPerformancePreset extends Config
 
     public function snowProducingTempo(): int
     {
-        return parent::snowProducingTempo() * 250;
+        return parent::snowProducingTempo() * 150;
     }
 
     public function snowMaxNumOfFlakesAtOnce(): int
     {
-        return parent::snowMaxNumOfFlakesAtOnce() * 250;
+        return parent::snowMaxNumOfFlakesAtOnce() * 150;
     }
 
     public function snowHowManyFlakesNeedsToFallToFormAHill(): int

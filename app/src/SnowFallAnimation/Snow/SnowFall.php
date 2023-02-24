@@ -3,13 +3,15 @@
 namespace TechBit\Snow\SnowFallAnimation\Snow;
 
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 use TechBit\Snow\SnowFallAnimation\Frame\FramePainter;
+use TechBit\Snow\SnowFallAnimation\Object\IAnimationConfigurableObject;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationVisibleObject;
 use TechBit\Snow\SnowFallAnimation\Wind\IWind;
 use TechBit\Snow\Console\IConsole;
 
 
-final class SnowFall implements IAnimationVisibleObject
+final class SnowFall implements IAnimationVisibleObject, IAnimationConfigurableObject
 {
     private readonly SnowBasis $basis;
 
@@ -21,18 +23,22 @@ final class SnowFall implements IAnimationVisibleObject
 
     private readonly IWind $wind;
 
-    private readonly float $gravityConstant;
+    private float $gravityConstant;
 
 
     public function initialize(AnimationContext $context): void
     {
-        $this->gravityConstant = $context->config()->gravity();
         $this->particles = $context->snowParticles();
         $this->console = $context->console();
         $this->renderer = $context->painter();
         $this->basis = $context->snowBasis();
         $this->wind = $context->wind();
     }
+
+	public function onConfigChange(Config $config): void 
+    {
+        $this->gravityConstant = $config->gravity();
+	}
 
     public function renderFirstFrame(): void
     {
@@ -56,7 +62,7 @@ final class SnowFall implements IAnimationVisibleObject
                 continue;
             }
 
-            if ($this->basis->isHitAt($this->particles->x($idx), $this->particles->y($idx))) {
+            if ($this->basis->isHitAt($data[SnowParticles::X], $data[SnowParticles::Y])) {
                 continue;
             }
 
@@ -70,10 +76,9 @@ final class SnowFall implements IAnimationVisibleObject
         $this->wind->moveParticle($idx);
 
         // Gravity
-        $this->particles->moveByY($idx, $this->gravityConstant);
+        $this->particles->moveByY($idx, $this->gravityConstant * SnowParticles::perParticleFactor($idx, 0.5));
 
         // Momentum
         $this->particles->moveByMomentum($idx);
     }
-
 }

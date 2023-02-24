@@ -3,7 +3,6 @@
 namespace TechBit\Snow\SnowFallAnimation\Scene;
 
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
-use TechBit\Snow\SnowFallAnimation\Config\Config;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationVisibleObject;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowBasis;
 use TechBit\Snow\Console\ConsoleColor;
@@ -19,24 +18,24 @@ final class Scene implements IAnimationVisibleObject
 
     private readonly SnowBasis $basis;
 
-    private readonly Config $config;
+    private readonly bool $isShowingScene;
 
 
     public function __construct()
     {
-        $this->credentialsText = "[ 2022 (C) Maciej Ostrowski | https://github.com/mmmostrowski ]";
+        $this->credentialsText = "[ 2023 (C) Maciej Ostrowski | https://github.com/mmmostrowski ]";
     }
 
     public function initialize(AnimationContext $context): void
     {
         $this->console = $context->console();
         $this->basis = $context->snowBasis();
-        $this->config = $context->config();
+        $this->isShowingScene = $context->config()->showScene();
     }
 
     public function renderFirstFrame(): void
     {
-        if (!$this->config->showScene()) {
+        if (!$this->isShowingScene) {
             return;
         }
 

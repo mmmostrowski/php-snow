@@ -4,6 +4,7 @@ namespace TechBit\Snow\SnowFallAnimation\Wind;
 
 
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 
 final class WindComposition implements IWind
 {
@@ -21,6 +22,13 @@ final class WindComposition implements IWind
             $wind->initialize($context);
         }
     }
+
+	public function onConfigChange(Config $config): void 
+    {
+        foreach ($this->windForces as $wind) {
+            $wind->onConfigChange($config);
+        }        
+	}
 
     public function update(): void
     {

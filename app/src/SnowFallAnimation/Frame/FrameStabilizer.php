@@ -5,13 +5,12 @@ namespace TechBit\Snow\SnowFallAnimation\Frame;
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
 use TechBit\Snow\SnowFallAnimation\Config\Config;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationAliveObject;
+use TechBit\Snow\SnowFallAnimation\Object\IAnimationConfigurableObject;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationVisibleObject;
 use TechBit\Snow\Console\IConsole;
 
-final class FrameStabilizer implements IAnimationVisibleObject, IAnimationAliveObject
+final class FrameStabilizer implements IAnimationVisibleObject, IAnimationAliveObject, IAnimationConfigurableObject
 {
-
-    private readonly Config $config;
 
     private readonly IConsole $console;
 
@@ -25,15 +24,19 @@ final class FrameStabilizer implements IAnimationVisibleObject, IAnimationAliveO
 
     private int $frameCounter = 0;
 
+    private bool $showFps = false;
 
     public function initialize(AnimationContext $context): void
     {
-        $this->config = $context->config();
         $this->console = $context->console();
 
-        $this->intervalMs = (int)(1000 / $this->config->targetFps());
+        $this->intervalMs = (int)(1000 / $context->config()->targetFps());
         $this->lastSecond = (int)microtime(true);
     }
+	public function onConfigChange(Config $config): void 
+    {
+        $this->showFps = $config->showFps();
+	}
 
     public function update(): void
     {
@@ -70,7 +73,7 @@ final class FrameStabilizer implements IAnimationVisibleObject, IAnimationAliveO
 
     public function renderLoopFrame(): void
     {
-        if ($this->config->showFps()) {
+        if ($this->showFps) {
             $this->console->printAt(0, 0, 'fps: ' . $this->currentFps . '     ');
         }
     }

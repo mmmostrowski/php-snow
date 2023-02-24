@@ -2,9 +2,9 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Wind\Type;
 
-
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
 use TechBit\Snow\SnowFallAnimation\Wind\IWind;
+use TechBit\Snow\SnowFallAnimation\Config\Config;
 
 final class NoWind implements IWind
 {
@@ -20,5 +20,9 @@ final class NoWind implements IWind
     public function moveParticle(int $idx): void
     {
     }
+
+	public function onConfigChange(Config $config): void 
+    { 
+	}
 
 }

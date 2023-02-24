@@ -14,7 +14,9 @@ docker pull mmmostrowski/php-snow && docker run -it --rm mmmostrowski/php-snow
 
 #### Run custom scene
 ```shell
-docker run -it --rm mmmostrowski/php-snow https://raw.githubusercontent.com/mmmostrowski/php-snow/main/app/assets/scene-example.txt massiveSnow
+docker run -it --rm mmmostrowski/php-snow \
+    https://raw.githubusercontent.com/mmmostrowski/php-snow/main/app/assets/scene-example.txt \
+    massiveSnow
 ```
 
 ### Send a Postcard to your friend!
@@ -55,6 +57,10 @@ To run a preset simply add the preset code to the end of the command. E.x.:
 docker run -it --rm mmmostrowski/php-snow snowy
 ```
 
+You can also run presets slideshow. E.x.:
+```shell
+docker run -it --rm mmmostrowski/php-snow slideshow:noSnow,noGravity,testPerformance
+```
 
 ### Run and Develop locally
 

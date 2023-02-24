@@ -2,8 +2,6 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Object;
 
-use InvalidArgumentException;
-
 final class AnimationObjects
 {
 
@@ -22,6 +20,11 @@ final class AnimationObjects
      */
     private readonly array $aliveObjects;
 
+    /**
+     * @return IAnimationConfigurableObject[]
+     */
+    private readonly array $configurableObjects;
+
 
     /**
      * @param IAnimationObject[] $objects
@@ -30,12 +33,13 @@ final class AnimationObjects
     {
         $aliveObjects = [];
         $visibleObjects = [];
+        $configurableObjects = [];
 
-        foreach ($objects as $object) {
+        foreach ($objects as $i => $object) {
             $class = get_class($object);
 
             if (!$object instanceof IAnimationObject) {
-                throw new InvalidArgumentException("Expected object of type: " . IAnimationObject::class . ". Got: " . $class);
+                unset($objects[$i]);
             }
 
             if ($object instanceof IAnimationAliveObject) {
@@ -44,11 +48,15 @@ final class AnimationObjects
             if ($object instanceof IAnimationVisibleObject) {
                 $visibleObjects[$class] = $object;
             }
+            if ($object instanceof IAnimationConfigurableObject) {
+                $configurableObjects[$class] = $object;
+            }
         }
 
-        $this->objects = $objects;
+        $this->objects = array_values($objects);
         $this->aliveObjects = $aliveObjects;
         $this->visibleObjects = $visibleObjects;
+        $this->configurableObjects = $configurableObjects;
     }
 
 
@@ -74,6 +82,14 @@ final class AnimationObjects
     public function allAliveObjects(): array
     {
         return $this->aliveObjects;
+    }
+
+    /**
+     * @return IAnimationConfigurableObject[]
+     */
+    public function allConfigurableObjects(): array
+    {
+        return $this->configurableObjects;
     }
 
 }

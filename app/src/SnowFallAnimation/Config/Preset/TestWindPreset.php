@@ -2,10 +2,10 @@
 
 namespace TechBit\Snow\SnowFallAnimation\Config\Preset;
 
-use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\DefaultConfig;
 
 
-final class TestWindPreset extends Config
+final class TestWindPreset extends DefaultConfig
 {
 
 //    public function fps()
@@ -50,15 +50,32 @@ final class TestWindPreset extends Config
 //        return 0;
 //    }
 
+    // public function windBlowsFrequency(): int
+    // {
+    //     return 100;
+    // }
+
     public function snowProducingTempo(): int
     {
-        return parent::snowProducingTempo() * 3;
+        return parent::snowProducingTempo() * 20;
     }
 
     public function snowMaxNumOfFlakesAtOnce(): int
     {
-        return parent::snowMaxNumOfFlakesAtOnce() * 3;
+        return parent::snowMaxNumOfFlakesAtOnce() * 20;
     }
+
+    public function windBlowsMinAnimationLength(): int
+    {
+        return parent::windBlowsMinAnimationLength() * 10;
+    }
+
+    public function windBlowsMaxAnimationLength(): int
+    {
+        return parent::windBlowsMaxAnimationLength() * 10;
+    }
+
+
 
 //    public function microMovementFrequency()
 //    {
@@ -79,5 +96,5 @@ final class TestWindPreset extends Config
     {
         return true;
     }
-
+    
 }

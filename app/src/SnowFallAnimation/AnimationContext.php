@@ -3,6 +3,7 @@
 namespace TechBit\Snow\SnowFallAnimation;
 
 use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\StartupConfig;
 use TechBit\Snow\SnowFallAnimation\Frame\IFramePainter;
 use TechBit\Snow\SnowFallAnimation\Snow\ISnowFlakeShape;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowBasis;
@@ -19,15 +20,16 @@ final class AnimationContext
         private readonly IWind $wind,
         private readonly ISnowFlakeShape $snowFlakeShape,
         private readonly Config $config,
+        private readonly StartupConfig $startupConfig,
         private readonly SnowBasis $snowBasis,
         private readonly SnowParticles $snowParticles,
     )
     {
     }
-
-    public function config(): Config
+    
+    public function config(): StartupConfig
     {
-        return $this->config;
+        return $this->startupConfig;
     }
 
     public function console(): IConsole
