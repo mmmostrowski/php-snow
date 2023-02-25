@@ -1,4 +1,4 @@
-FROM php:8.1.3-cli-alpine3.14
+FROM php:8.2.3-cli-alpine3.17
 
 RUN apk add ncurses \
     && apk update && apk upgrade && apk add bash
