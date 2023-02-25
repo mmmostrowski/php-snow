@@ -32,7 +32,7 @@ final class SnowParticles
         ];
     }
 
-    public function makeNew(int $x, float $y, string $shape): array
+    public function makeNew(float $x, float $y, string $shape): array
     {
         return [
                 self::X => $x,
@@ -70,12 +70,6 @@ final class SnowParticles
     public function shape(int $idx): string
     {
         return $this->particles[$idx][self::SHAPE];
-    }
-
-    public function moveBy(int $idx, float $dX, float $dY): void
-    {
-        $this->particles[$idx][self::X] += $dX;
-        $this->particles[$idx][self::Y] += $dY;
     }
 
     public function moveByX(int $idx, float $dx): void

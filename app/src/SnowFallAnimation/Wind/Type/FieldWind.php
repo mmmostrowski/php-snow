@@ -57,8 +57,8 @@ final class FieldWind implements IWind
     {
         $this->updateGridEveryNthFrame = $config->windFieldGridUpdateEveryNthFrame();
         $this->fieldWindVariation = $config->windFieldVariation();
-        $this->strengthMin = $config->windFieldStrengthMin() * 0.005;
-        $this->strengthMax = $config->windFieldStrengthMax() * 0.005;
+        $this->strengthMin = $config->windFieldStrengthMin() * 0.002;
+        $this->strengthMax = $config->windFieldStrengthMax() * 0.002;
 
         $previousGridSize = $this->gridSize;
         $this->gridSize = $config->windFieldGridSize();
@@ -111,7 +111,7 @@ final class FieldWind implements IWind
         }
 
         $forceVector = $this->grid[$particleX][$particleY];
-        $perParticleFactor = SnowParticles::perParticleFactor($idx, 0.5);
+        $perParticleFactor = SnowParticles::perParticleFactor($idx, 0.2);
         $this->particles->updateMomentum($idx, 
             $forceVector[0] * $perParticleFactor,
             $forceVector[1] * $perParticleFactor,

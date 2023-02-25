@@ -56,4 +56,6 @@ interface Config
 
     public function windBlowsMaxAnimationLength(): int;
 
+    public function extendWorkingAreaFacor(): float;
+
 }

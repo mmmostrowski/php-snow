@@ -212,6 +212,10 @@ final class ConfigPresetSlider implements Config, IAnimationAliveObject
 		return $this->closestPreset()->showFps();
 	}
 
+	public function extendWorkingAreaFacor(): float {
+		return $this->interpolateFloat(fn(Config $config) => $config->extendWorkingAreaFacor());
+	}
+
 	private function interpolateFloat(callable $callback): float
 	{
 		if (empty($this->targetPreset) || $this->progress == 0.0) {

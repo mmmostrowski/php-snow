@@ -29,6 +29,8 @@ final class Snow implements IAnimationVisibleObject, IAnimationConfigurableObjec
 
     private int $snowProducingTempo;
 
+    private float $extendWorkingAreaFacor;
+
     public function initialize(AnimationContext $context): void
     {
         $this->shapes = $context->snowFlakeShape();
@@ -44,6 +46,7 @@ final class Snow implements IAnimationVisibleObject, IAnimationConfigurableObjec
         $this->howMuchSnowIsGeneratedAtTop = $config->snowProbabilityOfProducingFromTop();
         $this->snowMaxNumOfFlakesAtOnce = $config->snowMaxNumOfFlakesAtOnce();
         $this->snowProducingTempo = $config->snowProducingTempo();
+        $this->extendWorkingAreaFacor = $config->extendWorkingAreaFacor();
 	}
 
     public function renderFirstFrame(): void
@@ -80,31 +83,18 @@ final class Snow implements IAnimationVisibleObject, IAnimationConfigurableObjec
     {
         $shape = $this->shapes->randomShape();
 
-        if (rand(0, 100) <= $this->howMuchSnowIsGeneratedAtTop) {
-            return $this->randomAtTop($shape);
-        }
-        return $this->randomInCenterArea($shape);
-    }
+        $extendByX = (int)($this->console->width() * $this->extendWorkingAreaFacor);
+        $extendByY = (int)($this->console->height() * $this->extendWorkingAreaFacor);
 
-    private function randomAtTop(string $shape): array
-    {
-        $extendBy = (int)($this->console->width() * 1.3);
+        $consoleYMin = (int)$this->console->minY() - $extendByY;
+        $consoleYMax = (int)$this->console->maxY() + $extendByY;
 
-        return $this->particles->makeNew(
-            rand((int)$this->console->minX() - $extendBy, (int)$this->console->maxX() + $extendBy),
-            $this->console->minY(),
-            $shape,
-        );
-    }
-
-    private function randomInCenterArea(string $shape): array
-    {
-        $extendByX = (int)($this->console->width() * 1.3);
-        $extendByY = (int)($this->console->height() * 1.3);
+        $newPlaceX = rand((int)$this->console->minX() - $extendByX, (int)$this->console->maxX() + $extendByX);
+        $newPlaceY = $consoleYMax - $consoleYMin - log(log(log(rand(17, 5000000)))) * ( $consoleYMax - $consoleYMin );
 
         return $this->particles->makeNew(
-            rand((int)$this->console->minX() - $extendByX, (int)$this->console->maxX() + $extendByX),
-            rand((int)$this->console->minY() - $extendByY, (int)$this->console->maxY() + $extendByY),
+            $newPlaceX,
+            $newPlaceY,
             $shape,
         );
     }

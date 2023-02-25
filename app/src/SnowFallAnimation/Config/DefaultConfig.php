@@ -68,7 +68,7 @@ class DefaultConfig implements Config
 
     public function windFieldGridSize(): int
     {
-        return 3;
+        return 4;
     }
 
     public function snowProducingTempo(): int
@@ -129,6 +129,11 @@ class DefaultConfig implements Config
     public function windBlowsMaxAnimationLength(): int
     {
         return 200;
+    }
+
+    public function extendWorkingAreaFacor(): float
+    {
+        return 1.5;
     }
 
 }

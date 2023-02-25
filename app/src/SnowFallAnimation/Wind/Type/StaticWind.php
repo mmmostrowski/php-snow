@@ -58,8 +58,8 @@ final class StaticWind implements IWind
             $this->strengthMax * abs($direction)
         );
 
-        $this->directionX = -sin($direction) * $strength;
-        $this->directionY = (cos($direction) * $strength) / 30;
+        $this->directionX = -sin($direction) * $strength * 0.11;
+        $this->directionY = cos($direction) * $strength * 0.033;
     }
 
     public function update(): void
@@ -70,9 +70,9 @@ final class StaticWind implements IWind
 
     public function moveParticle(int $idx): void
     {
-        $factor = SnowParticles::perParticleFactor($idx, 0.3);
+        $factor = SnowParticles::perParticleFactor($idx, 0.2);
 
-        $this->particles->moveBy($idx, $this->directionX * $factor, $this->directionY * $factor);
+        $this->particles->updateMomentum($idx, $this->directionX * $factor, $this->directionY * $factor);
     }
 
 }

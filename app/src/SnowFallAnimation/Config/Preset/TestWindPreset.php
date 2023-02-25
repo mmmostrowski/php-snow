@@ -23,16 +23,16 @@ final class TestWindPreset extends DefaultConfig
 //        return 0;
 //    }
 
-    public function windGlobalStrengthMin(): float
-    {
-        return 0.0;
-    }
+    // public function windGlobalStrengthMin(): float
+    // {
+    //     return 0.0;
+    // }
 
-    public function windGlobalStrengthMax(): float
-    {
-        return 0.0;
+    // public function windGlobalStrengthMax(): float
+    // {
+    //     return 0.0;
 
-    }
+    // }
 //
 //    public function windFieldVariation()
 //    {
@@ -85,11 +85,6 @@ final class TestWindPreset extends DefaultConfig
     public function microMovementPower(): float
     {
         return 0.0;
-    }
-
-    public function showScene(): bool
-    {
-        return false;
     }
 
     public function showFps(): bool

@@ -59,7 +59,7 @@ docker run -it --rm mmmostrowski/php-snow snowy
 
 You can also run presets slideshow. E.x.:
 ```shell
-docker run -it --rm mmmostrowski/php-snow slideshow:noSnow,noGravity,testPerformance
+docker run -it --rm mmmostrowski/php-snow slideshow:calm,massiveSnow
 ```
 
 ### Run and Develop locally

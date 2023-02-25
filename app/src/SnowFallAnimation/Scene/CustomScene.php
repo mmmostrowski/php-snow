@@ -3,7 +3,7 @@
 namespace TechBit\Snow\SnowFallAnimation\Scene;
 
 use TechBit\Snow\SnowFallAnimation\AnimationContext;
-use TechBit\Snow\SnowFallAnimation\Config\Config;
+use TechBit\Snow\SnowFallAnimation\Config\StartupConfig;
 use TechBit\Snow\SnowFallAnimation\Object\IAnimationVisibleObject;
 use TechBit\Snow\SnowFallAnimation\Snow\SnowBasis;
 use TechBit\Snow\Console\ConsoleColor;
@@ -16,7 +16,7 @@ final class CustomScene implements IAnimationVisibleObject
 
     private readonly SnowBasis $basis;
 
-    private readonly Config $config;
+    private readonly StartupConfig $config;
 
 
     public function __construct(string $sceneTxt)
