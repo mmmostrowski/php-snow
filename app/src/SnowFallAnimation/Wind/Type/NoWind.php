@@ -21,8 +21,8 @@ final class NoWind implements IWind
     {
     }
 
-	public function onConfigChange(Config $config): void 
+    public function onConfigChange(Config $config): void 
     { 
-	}
+    }
 
 }
